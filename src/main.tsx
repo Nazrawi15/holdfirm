@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { YieldProvider } from '@yo-protocol/react'
 import { config } from './wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 import './index.css'
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')!).render(
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <App />
+          <YieldProvider chainId={8453}>
+            <App />
+          </YieldProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
