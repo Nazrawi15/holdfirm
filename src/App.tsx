@@ -4,12 +4,14 @@ import { useYoVault } from './hooks/useYoVault'
 import { useUSDCBalance } from './hooks/useUSDCBalance'
 import { useAccount } from 'wagmi'
 import { DepositModal } from './components/DepositModal'
+import { RedeemModal } from './components/RedeemModal'
 
 function App() {
   const { apy, tvl, loading, error } = useYoVault()
   const { formatted: usdcBalance } = useUSDCBalance()
   const { isConnected } = useAccount()
   const [showDeposit, setShowDeposit] = useState(false)
+  const [showRedeem, setShowRedeem] = useState(false)
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-8 p-4">
@@ -27,13 +29,21 @@ function App() {
       {isConnected && (
         <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
           <p className="text-gray-400 text-sm">Your USDC Balance</p>
-          <p className="text-white text-3xl font-bold">${usdcBalance} USDC</p>
-          <button
-            onClick={() => setShowDeposit(true)}
-            className="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl text-lg"
-          >
-            Deposit into YO Vault
-          </button>
+          <p className="text-white text-3xl font-bold mb-4">${usdcBalance} USDC</p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowDeposit(true)}
+              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl"
+            >
+              Deposit
+            </button>
+            <button
+              onClick={() => setShowRedeem(true)}
+              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl"
+            >
+              Withdraw
+            </button>
+          </div>
         </div>
       )}
 
@@ -63,9 +73,12 @@ function App() {
         )}
       </div>
 
-      {/* Deposit Modal */}
+      {/* Modals */}
       {showDeposit && (
         <DepositModal onClose={() => setShowDeposit(false)} />
+      )}
+      {showRedeem && (
+        <RedeemModal onClose={() => setShowRedeem(false)} />
       )}
 
     </div>
