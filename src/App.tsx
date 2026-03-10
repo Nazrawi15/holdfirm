@@ -2,9 +2,12 @@ import { useState } from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useYoVault } from './hooks/useYoVault'
 import { useUSDCBalance } from './hooks/useUSDCBalance'
+import { useCurrencyRate, CURRENCIES } from './hooks/useCurrencyRate'
 import { useAccount } from 'wagmi'
 import { DepositModal } from './components/DepositModal'
 import { RedeemModal } from './components/RedeemModal'
+import { InflationCounter } from './components/InflationCounter'
+import { CurrencySelector } from './components/CurrencySelector'
 
 function App() {
   const { apy, tvl, loading, error } = useYoVault()
@@ -12,9 +15,19 @@ function App() {
   const { isConnected } = useAccount()
   const [showDeposit, setShowDeposit] = useState(false)
   const [showRedeem, setShowRedeem] = useState(false)
+  const [selectedCurrency, setSelectedCurrency] = useState('NGN')
+
+  const { rate } = useCurrencyRate(selectedCurrency)
+  const usdcBalanceNumber = parseFloat(usdcBalance)
+  const localBalance = (usdcBalanceNumber * rate).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+
+  const selectedCurrencyData = CURRENCIES.find(c => c.code === selectedCurrency)
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-8 p-4">
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-6 p-4">
 
       {/* Header */}
       <div className="text-center">
@@ -25,12 +38,36 @@ function App() {
       {/* Connect Wallet */}
       <ConnectButton />
 
+      {/* Currency Selector */}
+      <CurrencySelector
+        selected={selectedCurrency}
+        onChange={setSelectedCurrency}
+      />
+
+      {/* Inflation Counter */}
+      {selectedCurrencyData && (
+        <InflationCounter
+          usdcBalance={usdcBalanceNumber}
+          inflationRate={selectedCurrencyData.inflation}
+          currencyCode={selectedCurrency}
+          currencyRate={rate}
+        />
+      )}
+
       {/* USDC Balance */}
       {isConnected && (
         <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
-          <p className="text-gray-400 text-sm">Your USDC Balance</p>
-          <p className="text-white text-3xl font-bold mb-4">${usdcBalance} USDC</p>
-          <div className="flex gap-3">
+          <p className="text-gray-400 text-sm">Your Savings</p>
+          <p className="text-white text-3xl font-bold">
+            ${usdcBalance} USDC
+          </p>
+          <p className="text-green-400 text-lg mt-1">
+            {selectedCurrencyData?.flag} {selectedCurrency} {localBalance}
+          </p>
+          <p className="text-gray-500 text-sm mt-1">
+            Earning {apy}% APY — protected from inflation
+          </p>
+          <div className="flex gap-3 mt-4">
             <button
               onClick={() => setShowDeposit(true)}
               className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl"
