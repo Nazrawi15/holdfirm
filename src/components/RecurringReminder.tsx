@@ -13,7 +13,6 @@ export default function RecurringReminder() {
     if (stored !== null) {
       setSelectedDay(parseInt(stored))
       setSaved(true)
-
       const today = new Date().getDay()
       const todayDate = new Date().toISOString().split('T')[0]
       if (parseInt(stored) === today && lastSaved !== todayDate) {
@@ -37,28 +36,55 @@ export default function RecurringReminder() {
   }
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-      <h3 className="text-white font-semibold text-lg mb-1">⏰ Recurring Save Reminder</h3>
-      <p className="text-gray-400 text-sm mb-4">Pick a day each week to save. Build the habit.</p>
+    <div style={{
+      backgroundColor: '#f9fafb',
+      border: '1px solid #f3f4f6',
+      borderRadius: '16px',
+      padding: '24px',
+    }}>
+      <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '16px', margin: '0 0 4px 0' }}>
+        ⏰ Recurring Save Reminder
+      </h3>
+      <p style={{ color: '#9ca3af', fontSize: '13px', margin: '0 0 16px 0' }}>
+        Pick a day each week to save. Build the habit.
+      </p>
 
       {showNudge && (
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-4 text-yellow-400 text-sm">
+        <div style={{
+          backgroundColor: '#fefce8',
+          border: '1px solid #fde68a',
+          borderRadius: '10px',
+          padding: '10px 14px',
+          marginBottom: '14px',
+          color: '#92400e',
+          fontSize: '13px',
+          fontWeight: 600,
+        }}>
           🔔 Today is your saving day! Don't break the habit — deposit now.
         </div>
       )}
 
       {!saved ? (
-        <div className="space-y-3">
-          <div className="grid grid-cols-4 gap-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '8px',
+          }}>
             {DAYS.map((day, i) => (
               <button
                 key={day}
                 onClick={() => setSelectedDay(i)}
-                className={`py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedDay === i
-                    ? 'bg-green-500 text-black'
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
+                style={{
+                  padding: '8px 4px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: selectedDay === i ? '2px solid #22c55e' : '1px solid #e5e7eb',
+                  backgroundColor: selectedDay === i ? '#f0fdf4' : 'white',
+                  color: selectedDay === i ? '#15803d' : '#6b7280',
+                }}
               >
                 {day.slice(0, 3)}
               </button>
@@ -67,17 +93,39 @@ export default function RecurringReminder() {
           <button
             onClick={handleSave}
             disabled={selectedDay === null}
-            className="w-full py-2 rounded-lg bg-green-500 text-black font-semibold text-sm disabled:opacity-40"
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '10px',
+              background: selectedDay === null
+                ? '#e5e7eb'
+                : 'linear-gradient(135deg, #22c55e, #16a34a)',
+              color: selectedDay === null ? '#9ca3af' : 'white',
+              fontWeight: 700,
+              fontSize: '14px',
+              border: 'none',
+              cursor: selectedDay === null ? 'not-allowed' : 'pointer',
+            }}
           >
             Set Reminder
           </button>
         </div>
       ) : (
-        <div className="flex items-center justify-between">
-          <p className="text-green-400 text-sm">
-            ✅ Reminder set for every <span className="font-bold">{DAYS[selectedDay!]}</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <p style={{ color: '#15803d', fontSize: '14px', fontWeight: 600, margin: 0 }}>
+            ✅ Reminder set for every <strong>{DAYS[selectedDay!]}</strong>
           </p>
-          <button onClick={handleReset} className="text-gray-500 text-xs hover:text-gray-300">
+          <button
+            onClick={handleReset}
+            style={{
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: '#9ca3af',
+              fontSize: '12px',
+              cursor: 'pointer',
+              fontWeight: 600,
+            }}
+          >
             Change
           </button>
         </div>
