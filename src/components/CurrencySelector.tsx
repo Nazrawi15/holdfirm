@@ -8,26 +8,16 @@ interface CurrencySelectorProps {
 export function CurrencySelector({ selected, onChange }: CurrencySelectorProps) {
   return (
     <div>
-      <p style={{
-        color: '#6b7280',
-        fontSize: '13px',
-        marginBottom: '8px',
-        fontWeight: 600,
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-      }}>
-        Your local currency
-      </p>
       <select
         value={selected}
         onChange={e => onChange(e.target.value)}
         style={{
           width: '100%',
-          backgroundColor: '#111827',
-          border: '1px solid rgba(255,255,255,0.08)',
-          color: 'white',
-          borderRadius: '16px',
-          padding: '14px 16px',
+          backgroundColor: '#f9fafb',
+          border: '1px solid #e5e7eb',
+          color: '#111827',
+          borderRadius: '12px',
+          padding: '12px 16px',
           fontSize: '15px',
           fontWeight: 600,
           outline: 'none',
@@ -42,7 +32,7 @@ export function CurrencySelector({ selected, onChange }: CurrencySelectorProps) 
           <option
             key={currency.code}
             value={currency.code}
-            style={{ backgroundColor: '#111827' }}
+            style={{ backgroundColor: 'white', color: '#111827' }}
           >
             {currency.flag} {currency.name}
           </option>
