@@ -8,7 +8,7 @@ const publicClient = createPublicClient({
 })
 
 export const yoClient = new YoClient({
-  publicClients: [publicClient],
+  publicClients: { [base.id]: publicClient },
   chain: base,
 })
 
