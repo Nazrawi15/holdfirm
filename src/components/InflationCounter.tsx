@@ -16,8 +16,7 @@ export function InflationCounter({
   const [lostAmount, setLostAmount] = useState(0)
 
   useEffect(() => {
-    // How much local currency value is lost per second
-    // inflationRate is annual percentage e.g. 65 for 65%
+    setLostAmount(0)
     const annualLossRate = inflationRate / 100
     const perSecondLoss = annualLossRate / (365 * 24 * 60 * 60)
     const balanceInLocal = usdcBalance * currencyRate
@@ -35,19 +34,58 @@ export function InflationCounter({
   }).format(lostAmount)
 
   return (
-    <div className="bg-red-900 bg-opacity-40 border border-red-500 rounded-2xl p-6 w-full max-w-md">
-      <p className="text-red-400 text-sm font-semibold uppercase tracking-wide">
-        Inflation is stealing
-      </p>
-      <p className="text-white text-3xl font-bold mt-1">
+    <div style={{
+      backgroundColor: 'rgba(239, 68, 68, 0.05)',
+      border: '1px solid rgba(239, 68, 68, 0.2)',
+      borderRadius: '24px',
+      padding: '24px',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        marginBottom: '12px',
+      }}>
+        <div style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#ef4444',
+          animation: 'pulse 1s infinite',
+        }} />
+        <p style={{
+          color: '#ef4444',
+          fontSize: '12px',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+        }}>
+          Inflation is stealing
+        </p>
+      </div>
+
+      <p style={{
+        color: 'white',
+        fontSize: '36px',
+        fontWeight: 800,
+        marginBottom: '4px',
+        letterSpacing: '-1px',
+      }}>
         {currencyCode} {formatted}
       </p>
-      <p className="text-red-300 text-sm mt-2">
+
+      <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '16px' }}>
         Lost since you opened this app — at {inflationRate}% annual inflation
       </p>
-      <div className="mt-4 pt-4 border-t border-red-700">
-        <p className="text-green-400 text-sm font-semibold">
-          HoldFirm is protecting your savings from this
+
+      <div style={{
+        backgroundColor: 'rgba(34, 197, 94, 0.08)',
+        border: '1px solid rgba(34, 197, 94, 0.15)',
+        borderRadius: '12px',
+        padding: '12px',
+      }}>
+        <p style={{ color: '#22c55e', fontSize: '13px', fontWeight: 600 }}>
+          🔒 HoldFirm is protecting your savings from this
         </p>
       </div>
     </div>
