@@ -12,6 +12,7 @@ import { GoalStack } from './components/GoalStack'
 import { LockBox } from './components/LockBox'
 import SavingsStreak from './components/SavingsStreak'
 import RecurringReminder from './components/RecurringReminder'
+import { UserStats } from './components/UserStats'
 
 const TABS = ['NestSave', 'GoalStack', 'LockBox', 'Streak & Habits'] as const
 type Tab = typeof TABS[number]
@@ -249,6 +250,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
 function Dashboard() {
   const { apy, tvl, loading } = useYoVault()
   const { formatted: usdcBalance } = useUSDCBalance()
+  const { address } = useAccount()
   const [showDeposit, setShowDeposit] = useState(false)
   const [showRedeem, setShowRedeem] = useState(false)
   const [selectedCurrency, setSelectedCurrency] = useState('TRY')
@@ -481,9 +483,12 @@ function Dashboard() {
           )}
 
           {activeTab === 'Streak & Habits' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <SavingsStreak />
-              <RecurringReminder />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <SavingsStreak />
+                <RecurringReminder />
+              </div>
+              <UserStats address={address} />
             </div>
           )}
         </div>
