@@ -37,13 +37,7 @@ export function LockBox({ currentBalance }: LockBoxProps) {
     : 0
 
   return (
-    <div style={{
-      backgroundColor: '#111827',
-      borderRadius: '24px',
-      padding: '24px',
-      border: '1px solid rgba(255,255,255,0.08)',
-    }}>
-
+    <div>
       {/* Header */}
       <div style={{
         display: 'flex',
@@ -51,19 +45,22 @@ export function LockBox({ currentBalance }: LockBoxProps) {
         alignItems: 'center',
         marginBottom: '20px',
       }}>
-        <h2 style={{ color: 'white', fontWeight: 800, fontSize: '20px' }}>LockBox</h2>
+        <div>
+          <h2 style={{ color: '#111827', fontWeight: 800, fontSize: '20px', margin: 0 }}>LockBox</h2>
+          <p style={{ color: '#9ca3af', fontSize: '14px', margin: '4px 0 0 0' }}>Commitment builds wealth.</p>
+        </div>
         <span style={{ fontSize: '24px' }}>{isLocked ? '🔒' : '🔓'}</span>
       </div>
 
       {/* Not Locked */}
       {!isLocked && (
         <div>
-          <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '20px' }}>
-            Lock your savings for a set period. Commitment builds wealth.
+          <p style={{ color: '#374151', fontSize: '14px', marginBottom: '20px' }}>
+            Lock your savings for a set period and let yield do the work.
           </p>
 
-          <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '10px' }}>
-            Choose lock duration
+          <p style={{ color: '#6b7280', fontSize: '12px', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '10px' }}>
+            CHOOSE LOCK DURATION
           </p>
 
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
@@ -74,14 +71,10 @@ export function LockBox({ currentBalance }: LockBoxProps) {
                 style={{
                   flex: 1,
                   padding: '12px',
-                  borderRadius: '14px',
-                  border: lockDays === days
-                    ? '1px solid #22c55e'
-                    : '1px solid rgba(255,255,255,0.08)',
-                  backgroundColor: lockDays === days
-                    ? 'rgba(34, 197, 94, 0.1)'
-                    : '#1f2937',
-                  color: lockDays === days ? '#22c55e' : '#6b7280',
+                  borderRadius: '12px',
+                  border: lockDays === days ? '2px solid #22c55e' : '1px solid #e5e7eb',
+                  backgroundColor: lockDays === days ? '#f0fdf4' : '#f9fafb',
+                  color: lockDays === days ? '#15803d' : '#6b7280',
                   fontWeight: 700,
                   fontSize: '14px',
                   cursor: 'pointer',
@@ -93,28 +86,27 @@ export function LockBox({ currentBalance }: LockBoxProps) {
           </div>
 
           <div style={{
-            backgroundColor: '#1f2937',
-            borderRadius: '16px',
+            backgroundColor: '#f9fafb',
+            border: '1px solid #f3f4f6',
+            borderRadius: '14px',
             padding: '16px',
             marginBottom: '20px',
             display: 'flex',
             justifyContent: 'space-between',
           }}>
             <div>
-              <p style={{ color: '#6b7280', fontSize: '13px' }}>Locking</p>
-              <p style={{ color: 'white', fontWeight: 700, fontSize: '18px' }}>
+              <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, margin: '0 0 4px 0' }}>LOCKING</p>
+              <p style={{ color: '#111827', fontWeight: 700, fontSize: '18px', margin: 0 }}>
                 ${currentBalance.toFixed(2)} USDC
               </p>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <p style={{ color: '#6b7280', fontSize: '13px' }}>Unlock date</p>
-              <p style={{ color: 'white', fontWeight: 700, fontSize: '18px' }}>
+              <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, margin: '0 0 4px 0' }}>UNLOCK DATE</p>
+              <p style={{ color: '#111827', fontWeight: 700, fontSize: '18px', margin: 0 }}>
                 {new Date(
                   new Date().setDate(new Date().getDate() + lockDays)
                 ).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
+                  month: 'short', day: 'numeric', year: 'numeric',
                 })}
               </p>
             </div>
@@ -129,9 +121,10 @@ export function LockBox({ currentBalance }: LockBoxProps) {
               fontWeight: 700,
               fontSize: '16px',
               padding: '16px',
-              borderRadius: '16px',
+              borderRadius: '14px',
               border: 'none',
               cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(34,197,94,0.25)',
             }}
           >
             Lock My Savings
@@ -143,21 +136,21 @@ export function LockBox({ currentBalance }: LockBoxProps) {
       {isLocked && !showWarning && (
         <div>
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <p style={{ fontSize: '64px', marginBottom: '8px' }}>🔒</p>
-            <p style={{ color: 'white', fontSize: '40px', fontWeight: 800 }}>{daysRemaining}</p>
-            <p style={{ color: '#6b7280', fontSize: '14px' }}>days until unlock</p>
+            <p style={{ fontSize: '56px', margin: '0 0 8px 0' }}>🔒</p>
+            <p style={{ color: '#111827', fontSize: '40px', fontWeight: 800, margin: '0 0 4px 0' }}>{daysRemaining}</p>
+            <p style={{ color: '#9ca3af', fontSize: '14px', margin: 0 }}>days until unlock</p>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ color: '#6b7280', fontSize: '13px' }}>Lock progress</span>
-              <span style={{ color: 'white', fontSize: '13px', fontWeight: 700 }}>
+              <span style={{ color: '#111827', fontSize: '13px', fontWeight: 700 }}>
                 {progressPercent.toFixed(0)}%
               </span>
             </div>
             <div style={{
               width: '100%',
-              backgroundColor: '#1f2937',
+              backgroundColor: '#e5e7eb',
               borderRadius: '100px',
               height: '8px',
             }}>
@@ -171,38 +164,37 @@ export function LockBox({ currentBalance }: LockBoxProps) {
           </div>
 
           <div style={{
-            backgroundColor: '#1f2937',
-            borderRadius: '16px',
+            backgroundColor: '#f9fafb',
+            border: '1px solid #f3f4f6',
+            borderRadius: '14px',
             padding: '16px',
             display: 'flex',
             justifyContent: 'space-between',
             marginBottom: '16px',
           }}>
             <div>
-              <p style={{ color: '#6b7280', fontSize: '13px' }}>Locked amount</p>
-              <p style={{ color: 'white', fontWeight: 700 }}>${currentBalance.toFixed(2)} USDC</p>
+              <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, margin: '0 0 4px 0' }}>LOCKED AMOUNT</p>
+              <p style={{ color: '#111827', fontWeight: 700, margin: 0 }}>${currentBalance.toFixed(2)} USDC</p>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <p style={{ color: '#6b7280', fontSize: '13px' }}>Unlock date</p>
-              <p style={{ color: 'white', fontWeight: 700 }}>
+              <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, margin: '0 0 4px 0' }}>UNLOCK DATE</p>
+              <p style={{ color: '#111827', fontWeight: 700, margin: 0 }}>
                 {lockDate?.toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
+                  month: 'short', day: 'numeric', year: 'numeric',
                 })}
               </p>
             </div>
           </div>
 
           <div style={{
-            backgroundColor: 'rgba(34, 197, 94, 0.08)',
-            border: '1px solid rgba(34, 197, 94, 0.2)',
-            borderRadius: '14px',
+            backgroundColor: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: '12px',
             padding: '14px',
             marginBottom: '16px',
           }}>
-            <p style={{ color: '#22c55e', fontSize: '14px', fontWeight: 600 }}>
-              Your savings are locked and earning yield every day
+            <p style={{ color: '#15803d', fontSize: '14px', fontWeight: 600, margin: 0 }}>
+              ✅ Your savings are locked and earning yield every day
             </p>
           </div>
 
@@ -210,13 +202,13 @@ export function LockBox({ currentBalance }: LockBoxProps) {
             onClick={handleUnlock}
             style={{
               width: '100%',
-              backgroundColor: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#6b7280',
+              backgroundColor: '#f9fafb',
+              border: '1px solid #e5e7eb',
+              color: '#9ca3af',
               fontWeight: 600,
               fontSize: '14px',
               padding: '14px',
-              borderRadius: '14px',
+              borderRadius: '12px',
               cursor: 'pointer',
             }}
           >
@@ -229,8 +221,8 @@ export function LockBox({ currentBalance }: LockBoxProps) {
       {showWarning && (
         <div>
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <p style={{ fontSize: '48px', marginBottom: '12px' }}>⚠️</p>
-            <p style={{ color: 'white', fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>
+            <p style={{ fontSize: '48px', margin: '0 0 12px 0' }}>⚠️</p>
+            <p style={{ color: '#111827', fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>
               Unlock early?
             </p>
             <p style={{ color: '#6b7280', fontSize: '14px', lineHeight: 1.6 }}>
@@ -249,9 +241,10 @@ export function LockBox({ currentBalance }: LockBoxProps) {
                 fontWeight: 700,
                 fontSize: '15px',
                 padding: '14px',
-                borderRadius: '14px',
+                borderRadius: '12px',
                 border: 'none',
                 cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(34,197,94,0.2)',
               }}
             >
               Keep Locked
@@ -260,22 +253,21 @@ export function LockBox({ currentBalance }: LockBoxProps) {
               onClick={confirmUnlock}
               style={{
                 flex: 1,
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#6b7280',
+                backgroundColor: '#fef2f2',
+                border: '1px solid #fecaca',
+                color: '#dc2626',
                 fontWeight: 700,
                 fontSize: '15px',
                 padding: '14px',
-                borderRadius: '14px',
+                borderRadius: '12px',
                 cursor: 'pointer',
               }}
             >
-              Unlock
+              Unlock Anyway
             </button>
           </div>
         </div>
       )}
-
     </div>
   )
 }
