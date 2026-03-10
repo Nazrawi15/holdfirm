@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { recordSavingToday } from './SavingsStreak'
 
 const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as `0x${string}`
 const VAULT_ADDRESS = '0x0000000f2eb9f69274678c76222b35eec7588a65' as `0x${string}`
@@ -63,6 +64,7 @@ export function DepositModal({ onClose }: DepositModalProps) {
 
   if (depositSuccess && step === 'depositing') {
     setStep('done')
+    recordSavingToday()
   }
 
   function handleDeposit() {
@@ -126,7 +128,7 @@ export function DepositModal({ onClose }: DepositModalProps) {
 
         {step === 'done' && (
           <div className="text-center py-8">
-            <p className="text-4xl mb-4">Done!</p>
+            <p className="text-4xl mb-4">🎉</p>
             <p className="text-white text-xl font-bold">Deposit Successful!</p>
             <p className="text-gray-400 mt-2">Your USDC is now earning yield</p>
             {depositTxHash && (
