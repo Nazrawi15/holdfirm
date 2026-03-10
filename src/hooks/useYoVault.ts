@@ -11,8 +11,8 @@ export function useYoVault() {
     getVaultSnapshot(apiClient, NETWORK, VAULT_ADDRESS)
       .then(snapshot => {
         const raw = snapshot.stats.yield['1d']
-        setApy(raw ? (parseFloat(raw) * 100).toFixed(2) : '0')
-        setTvl(snapshot.stats.tvl.formatted)
+        setApy(raw ? parseFloat(raw).toFixed(2) : '0')
+        setTvl(parseFloat(snapshot.stats.tvl.formatted).toLocaleString('en-US', { maximumFractionDigits: 0 }))
         setLoading(false)
       })
       .catch(() => setLoading(false))
