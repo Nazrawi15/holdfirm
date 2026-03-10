@@ -11,6 +11,8 @@ import { GoalStack } from './components/GoalStack'
 import { LockBox } from './components/LockBox'
 import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
+import SavingsStreak from './components/SavingsStreak'
+import RecurringReminder from './components/RecurringReminder'
 
 function App() {
   const { apy, tvl, loading } = useYoVault()
@@ -37,10 +39,8 @@ function App() {
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     }}>
 
-      {/* Navbar */}
       <Navbar />
 
-      {/* Background Glow */}
       <div style={{
         position: 'fixed',
         top: '0',
@@ -53,12 +53,9 @@ function App() {
         zIndex: 0,
       }} />
 
-      {/* Main Content */}
       <div style={{
         position: 'relative',
         zIndex: 1,
-        paddingTop: '80px',
-        paddingBottom: '60px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -66,7 +63,6 @@ function App() {
         padding: '100px 16px 60px 16px',
       }}>
 
-        {/* Hero */}
         <Hero
           apy={loading ? '...' : apy}
           tvl={loading ? '...' : tvl}
@@ -74,15 +70,10 @@ function App() {
           isConnected={isConnected}
         />
 
-        {/* Currency Selector */}
         <div style={{ width: '100%', maxWidth: '480px' }}>
-          <CurrencySelector
-            selected={selectedCurrency}
-            onChange={setSelectedCurrency}
-          />
+          <CurrencySelector selected={selectedCurrency} onChange={setSelectedCurrency} />
         </div>
 
-        {/* Inflation Counter */}
         {selectedCurrencyData && (
           <div style={{ width: '100%', maxWidth: '480px' }}>
             <InflationCounter
@@ -94,7 +85,6 @@ function App() {
           </div>
         )}
 
-        {/* Savings Card */}
         {isConnected && (
           <div style={{
             width: '100%',
@@ -104,9 +94,7 @@ function App() {
             padding: '24px',
             border: '1px solid rgba(255,255,255,0.08)',
           }}>
-            <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '4px' }}>
-              Your Savings
-            </p>
+            <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '4px' }}>Your Savings</p>
             <p style={{ color: 'white', fontSize: '36px', fontWeight: 800, marginBottom: '4px' }}>
               ${usdcBalance} USDC
             </p>
@@ -153,7 +141,6 @@ function App() {
           </div>
         )}
 
-        {/* Mode Switcher */}
         {isConnected && (
           <div style={{
             width: '100%',
@@ -188,7 +175,6 @@ function App() {
           </div>
         )}
 
-        {/* NestSave Mode */}
         {isConnected && activeMode === 'nestsave' && (
           <div style={{
             width: '100%',
@@ -217,24 +203,30 @@ function App() {
           </div>
         )}
 
-        {/* GoalStack Mode */}
         {isConnected && activeMode === 'goalstack' && (
           <div style={{ width: '100%', maxWidth: '480px' }}>
-            <GoalStack
-              currentBalance={usdcBalanceNumber}
-              apy={apy}
-            />
+            <GoalStack currentBalance={usdcBalanceNumber} apy={apy} />
           </div>
         )}
 
-        {/* LockBox Mode */}
         {isConnected && activeMode === 'lockbox' && (
           <div style={{ width: '100%', maxWidth: '480px' }}>
             <LockBox currentBalance={usdcBalanceNumber} />
           </div>
         )}
 
-        {/* Not Connected — Vault Stats */}
+        {/* Streak + Reminder — always visible when connected */}
+        {isConnected && (
+          <>
+            <div style={{ width: '100%', maxWidth: '480px' }}>
+              <SavingsStreak />
+            </div>
+            <div style={{ width: '100%', maxWidth: '480px' }}>
+              <RecurringReminder />
+            </div>
+          </>
+        )}
+
         {!isConnected && (
           <div style={{
             width: '100%',
@@ -266,13 +258,8 @@ function App() {
 
       </div>
 
-      {/* Modals */}
-      {showDeposit && (
-        <DepositModal onClose={() => setShowDeposit(false)} />
-      )}
-      {showRedeem && (
-        <RedeemModal onClose={() => setShowRedeem(false)} />
-      )}
+      {showDeposit && <DepositModal onClose={() => setShowDeposit(false)} />}
+      {showRedeem && <RedeemModal onClose={() => setShowRedeem(false)} />}
 
     </div>
   )
