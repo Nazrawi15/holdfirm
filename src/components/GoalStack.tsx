@@ -25,14 +25,27 @@ export function GoalStack({ currentBalance, apy }: GoalStackProps) {
   const willReachGoal = projectedBalance >= goalAmount
 
   return (
-    <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
+    <div style={{
+      backgroundColor: '#111827',
+      borderRadius: '24px',
+      padding: '24px',
+      border: '1px solid rgba(255,255,255,0.08)',
+    }}>
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-white font-bold text-xl">GoalStack</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ color: 'white', fontWeight: 800, fontSize: '20px' }}>GoalStack</h2>
         <button
           onClick={() => setIsEditing(!isEditing)}
-          className="text-gray-400 text-sm hover:text-white"
+          style={{
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#9ca3af',
+            fontSize: '13px',
+            padding: '6px 14px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+          }}
         >
           {isEditing ? 'Done' : 'Edit Goal'}
         </button>
@@ -40,87 +53,145 @@ export function GoalStack({ currentBalance, apy }: GoalStackProps) {
 
       {/* Edit Mode */}
       {isEditing && (
-        <div className="mb-4 flex flex-col gap-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
           <div>
-            <p className="text-gray-400 text-sm mb-1">Goal name</p>
+            <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '6px' }}>Goal name</p>
             <input
               type="text"
               value={goalName}
               onChange={e => setGoalName(e.target.value)}
-              className="w-full bg-gray-700 text-white rounded-xl p-3 outline-none"
+              style={{
+                width: '100%',
+                backgroundColor: '#1f2937',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: 'white',
+                borderRadius: '12px',
+                padding: '12px',
+                fontSize: '15px',
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
             />
           </div>
           <div>
-            <p className="text-gray-400 text-sm mb-1">Target amount (USD)</p>
+            <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '6px' }}>Target amount (USD)</p>
             <input
               type="number"
               value={goalAmount}
               onChange={e => setGoalAmount(Number(e.target.value))}
-              className="w-full bg-gray-700 text-white rounded-xl p-3 outline-none"
+              style={{
+                width: '100%',
+                backgroundColor: '#1f2937',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: 'white',
+                borderRadius: '12px',
+                padding: '12px',
+                fontSize: '15px',
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
             />
           </div>
           <div>
-            <p className="text-gray-400 text-sm mb-1">Target date</p>
+            <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '6px' }}>Target date</p>
             <input
               type="date"
               value={goalDate}
               onChange={e => setGoalDate(e.target.value)}
-              className="w-full bg-gray-700 text-white rounded-xl p-3 outline-none"
+              style={{
+                width: '100%',
+                backgroundColor: '#1f2937',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: 'white',
+                borderRadius: '12px',
+                padding: '12px',
+                fontSize: '15px',
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
             />
           </div>
         </div>
       )}
 
-      {/* Goal Display */}
+      {/* Goal Name */}
       {!isEditing && (
-        <div className="mb-4">
-          <p className="text-gray-400 text-sm">Saving for</p>
-          <p className="text-white text-xl font-bold">{goalName}</p>
+        <div style={{ marginBottom: '20px' }}>
+          <p style={{ color: '#6b7280', fontSize: '13px' }}>Saving for</p>
+          <p style={{ color: 'white', fontSize: '22px', fontWeight: 700 }}>{goalName}</p>
         </div>
       )}
 
       {/* Progress Bar */}
-      <div className="mb-4">
-        <div className="flex justify-between text-sm mb-2">
-          <span className="text-gray-400">Progress</span>
-          <span className="text-white font-bold">{progress.toFixed(1)}%</span>
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <span style={{ color: '#6b7280', fontSize: '13px' }}>Progress</span>
+          <span style={{ color: 'white', fontWeight: 700, fontSize: '13px' }}>{progress.toFixed(1)}%</span>
         </div>
-        <div className="w-full bg-gray-700 rounded-full h-4">
-          <div
-            className="bg-green-500 h-4 rounded-full transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
+        <div style={{
+          width: '100%',
+          backgroundColor: '#1f2937',
+          borderRadius: '100px',
+          height: '10px',
+        }}>
+          <div style={{
+            height: '10px',
+            borderRadius: '100px',
+            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+            width: `${progress}%`,
+            transition: 'width 0.5s ease',
+          }} />
         </div>
-        <div className="flex justify-between text-sm mt-2">
-          <span className="text-green-400 font-bold">${currentBalance.toFixed(2)}</span>
-          <span className="text-gray-400">Goal: ${goalAmount}</span>
-        </div>
-      </div>
-
-      {/* Countdown */}
-      <div className="flex justify-between mb-4">
-        <div className="bg-gray-700 rounded-xl p-3 flex-1 mr-2 text-center">
-          <p className="text-white text-2xl font-bold">{daysLeft}</p>
-          <p className="text-gray-400 text-sm">Days left</p>
-        </div>
-        <div className="bg-gray-700 rounded-xl p-3 flex-1 ml-2 text-center">
-          <p className="text-white text-2xl font-bold">
-            ${projectedBalance.toFixed(2)}
-          </p>
-          <p className="text-gray-400 text-sm">Projected by deadline</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+          <span style={{ color: '#22c55e', fontWeight: 700, fontSize: '14px' }}>${currentBalance.toFixed(2)}</span>
+          <span style={{ color: '#6b7280', fontSize: '14px' }}>Goal: ${goalAmount}</span>
         </div>
       </div>
 
-      {/* Projection Message */}
+      {/* Stats Row */}
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+        <div style={{
+          flex: 1,
+          backgroundColor: '#1f2937',
+          borderRadius: '16px',
+          padding: '16px',
+          textAlign: 'center',
+        }}>
+          <p style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>{daysLeft}</p>
+          <p style={{ color: '#6b7280', fontSize: '12px' }}>Days left</p>
+        </div>
+        <div style={{
+          flex: 1,
+          backgroundColor: '#1f2937',
+          borderRadius: '16px',
+          padding: '16px',
+          textAlign: 'center',
+        }}>
+          <p style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>${projectedBalance.toFixed(2)}</p>
+          <p style={{ color: '#6b7280', fontSize: '12px' }}>Projected</p>
+        </div>
+      </div>
+
+      {/* Status Message */}
       {willReachGoal ? (
-        <div className="bg-green-900 bg-opacity-40 border border-green-500 rounded-xl p-3">
-          <p className="text-green-400 text-sm font-semibold">
-            You are on track to reach your goal by {new Date(goalDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        <div style={{
+          backgroundColor: 'rgba(34, 197, 94, 0.08)',
+          border: '1px solid rgba(34, 197, 94, 0.2)',
+          borderRadius: '14px',
+          padding: '14px',
+        }}>
+          <p style={{ color: '#22c55e', fontSize: '14px', fontWeight: 600 }}>
+            On track to reach your goal by {new Date(goalDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>
         </div>
       ) : (
-        <div className="bg-yellow-900 bg-opacity-40 border border-yellow-500 rounded-xl p-3">
-          <p className="text-yellow-400 text-sm font-semibold">
+        <div style={{
+          backgroundColor: 'rgba(234, 179, 8, 0.08)',
+          border: '1px solid rgba(234, 179, 8, 0.2)',
+          borderRadius: '14px',
+          padding: '14px',
+        }}>
+          <p style={{ color: '#eab308', fontSize: '14px', fontWeight: 600 }}>
             Deposit more to reach ${goalAmount} by your deadline
           </p>
         </div>
