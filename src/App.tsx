@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useYoVault } from './hooks/useYoVault'
 import { useUSDCBalance } from './hooks/useUSDCBalance'
 import { useCurrencyRate, CURRENCIES } from './hooks/useCurrencyRate'
@@ -10,9 +9,11 @@ import { InflationCounter } from './components/InflationCounter'
 import { CurrencySelector } from './components/CurrencySelector'
 import { GoalStack } from './components/GoalStack'
 import { LockBox } from './components/LockBox'
+import { Navbar } from './components/Navbar'
+import { Hero } from './components/Hero'
 
 function App() {
-  const { apy, tvl, loading, error } = useYoVault()
+  const { apy, tvl, loading } = useYoVault()
   const { formatted: usdcBalance } = useUSDCBalance()
   const { isConnected } = useAccount()
   const [showDeposit, setShowDeposit] = useState(false)
@@ -30,152 +31,240 @@ function App() {
   const selectedCurrencyData = CURRENCIES.find(c => c.code === selectedCurrency)
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-6 p-4">
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#030712',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    }}>
 
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-white">HoldFirm 🔒</h1>
-        <p className="text-gray-400 mt-2">Save in dollars. Beat inflation.</p>
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Background Glow */}
+      <div style={{
+        position: 'fixed',
+        top: '0',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '600px',
+        height: '400px',
+        background: 'radial-gradient(ellipse, rgba(34,197,94,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }} />
+
+      {/* Main Content */}
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        paddingTop: '80px',
+        paddingBottom: '60px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '24px',
+        padding: '100px 16px 60px 16px',
+      }}>
+
+        {/* Hero */}
+        <Hero
+          apy={loading ? '...' : apy}
+          tvl={loading ? '...' : tvl}
+          onGetStarted={() => {}}
+          isConnected={isConnected}
+        />
+
+        {/* Currency Selector */}
+        <div style={{ width: '100%', maxWidth: '480px' }}>
+          <CurrencySelector
+            selected={selectedCurrency}
+            onChange={setSelectedCurrency}
+          />
+        </div>
+
+        {/* Inflation Counter */}
+        {selectedCurrencyData && (
+          <div style={{ width: '100%', maxWidth: '480px' }}>
+            <InflationCounter
+              usdcBalance={usdcBalanceNumber}
+              inflationRate={selectedCurrencyData.inflation}
+              currencyCode={selectedCurrency}
+              currencyRate={rate}
+            />
+          </div>
+        )}
+
+        {/* Savings Card */}
+        {isConnected && (
+          <div style={{
+            width: '100%',
+            maxWidth: '480px',
+            backgroundColor: '#111827',
+            borderRadius: '24px',
+            padding: '24px',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '4px' }}>
+              Your Savings
+            </p>
+            <p style={{ color: 'white', fontSize: '36px', fontWeight: 800, marginBottom: '4px' }}>
+              ${usdcBalance} USDC
+            </p>
+            <p style={{ color: '#22c55e', fontSize: '16px', marginBottom: '4px' }}>
+              {selectedCurrencyData?.flag} {selectedCurrency} {localBalance}
+            </p>
+            <p style={{ color: '#4b5563', fontSize: '13px', marginBottom: '20px' }}>
+              Earning {apy}% APY — protected from inflation
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setShowDeposit(true)}
+                style={{
+                  flex: 1,
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: '16px',
+                  padding: '14px',
+                  borderRadius: '14px',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Deposit
+              </button>
+              <button
+                onClick={() => setShowRedeem(true)}
+                style={{
+                  flex: 1,
+                  backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  color: '#60a5fa',
+                  fontWeight: 700,
+                  fontSize: '16px',
+                  padding: '14px',
+                  borderRadius: '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                Withdraw
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Mode Switcher */}
+        {isConnected && (
+          <div style={{
+            width: '100%',
+            maxWidth: '480px',
+            display: 'flex',
+            gap: '8px',
+            backgroundColor: '#111827',
+            borderRadius: '16px',
+            padding: '6px',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            {(['nestsave', 'goalstack', 'lockbox'] as const).map(mode => (
+              <button
+                key={mode}
+                onClick={() => setActiveMode(mode)}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  backgroundColor: activeMode === mode ? '#22c55e' : 'transparent',
+                  color: activeMode === mode ? 'white' : '#6b7280',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {mode === 'nestsave' ? 'NestSave' : mode === 'goalstack' ? 'GoalStack' : 'LockBox'}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* NestSave Mode */}
+        {isConnected && activeMode === 'nestsave' && (
+          <div style={{
+            width: '100%',
+            maxWidth: '480px',
+            backgroundColor: '#111827',
+            borderRadius: '24px',
+            padding: '24px',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            <h2 style={{ color: 'white', fontWeight: 800, fontSize: '20px', marginBottom: '8px' }}>
+              NestSave
+            </h2>
+            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '20px' }}>
+              Your savings in dollars, earning yield every day.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '13px' }}>Current APY</p>
+                <p style={{ color: '#22c55e', fontSize: '28px', fontWeight: 800 }}>{apy}%</p>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ color: '#6b7280', fontSize: '13px' }}>Total Locked</p>
+                <p style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>${tvl}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* GoalStack Mode */}
+        {isConnected && activeMode === 'goalstack' && (
+          <div style={{ width: '100%', maxWidth: '480px' }}>
+            <GoalStack
+              currentBalance={usdcBalanceNumber}
+              apy={apy}
+            />
+          </div>
+        )}
+
+        {/* LockBox Mode */}
+        {isConnected && activeMode === 'lockbox' && (
+          <div style={{ width: '100%', maxWidth: '480px' }}>
+            <LockBox currentBalance={usdcBalanceNumber} />
+          </div>
+        )}
+
+        {/* Not Connected — Vault Stats */}
+        {!isConnected && (
+          <div style={{
+            width: '100%',
+            maxWidth: '480px',
+            backgroundColor: '#111827',
+            borderRadius: '24px',
+            padding: '24px',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            <h2 style={{ color: 'white', fontWeight: 700, fontSize: '18px', marginBottom: '16px' }}>
+              YO Vault — yoUSD
+            </h2>
+            {loading ? (
+              <p style={{ color: '#6b7280' }}>Loading vault data...</p>
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ color: '#6b7280', fontSize: '13px' }}>APY</p>
+                  <p style={{ color: '#22c55e', fontSize: '28px', fontWeight: 800 }}>{apy}%</p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ color: '#6b7280', fontSize: '13px' }}>TVL</p>
+                  <p style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>${tvl}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
-
-      {/* Connect Wallet */}
-      <ConnectButton />
-
-      {/* Currency Selector */}
-      <CurrencySelector
-        selected={selectedCurrency}
-        onChange={setSelectedCurrency}
-      />
-
-      {/* Inflation Counter */}
-      {selectedCurrencyData && (
-        <InflationCounter
-          usdcBalance={usdcBalanceNumber}
-          inflationRate={selectedCurrencyData.inflation}
-          currencyCode={selectedCurrency}
-          currencyRate={rate}
-        />
-      )}
-
-      {/* USDC Balance */}
-      {isConnected && (
-        <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
-          <p className="text-gray-400 text-sm">Your Savings</p>
-          <p className="text-white text-3xl font-bold">
-            ${usdcBalance} USDC
-          </p>
-          <p className="text-green-400 text-lg mt-1">
-            {selectedCurrencyData?.flag} {selectedCurrency} {localBalance}
-          </p>
-          <p className="text-gray-500 text-sm mt-1">
-            Earning {apy}% APY — protected from inflation
-          </p>
-          <div className="flex gap-3 mt-4">
-            <button
-              onClick={() => setShowDeposit(true)}
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl"
-            >
-              Deposit
-            </button>
-            <button
-              onClick={() => setShowRedeem(true)}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl"
-            >
-              Withdraw
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Mode Switcher */}
-      {isConnected && (
-        <div className="flex gap-2 w-full max-w-md">
-          <button
-            onClick={() => setActiveMode('nestsave')}
-            className={`flex-1 py-3 rounded-xl font-bold text-sm ${
-              activeMode === 'nestsave'
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            NestSave
-          </button>
-          <button
-            onClick={() => setActiveMode('goalstack')}
-            className={`flex-1 py-3 rounded-xl font-bold text-sm ${
-              activeMode === 'goalstack'
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            GoalStack
-          </button>
-          <button
-            onClick={() => setActiveMode('lockbox')}
-            className={`flex-1 py-3 rounded-xl font-bold text-sm ${
-              activeMode === 'lockbox'
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            LockBox
-          </button>
-        </div>
-      )}
-
-      {/* NestSave Mode */}
-      {isConnected && activeMode === 'nestsave' && (
-        <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
-          <h2 className="text-white font-bold text-xl mb-2">NestSave</h2>
-          <p className="text-gray-400 text-sm mb-4">
-            Your savings in dollars, earning yield every day.
-          </p>
-          <div className="flex justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">APY</p>
-              <p className="text-green-400 text-2xl font-bold">{apy}%</p>
-            </div>
-            <div>
-              <p className="text-gray-400 text-sm">TVL</p>
-              <p className="text-white text-2xl font-bold">${tvl}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* GoalStack Mode */}
-      {isConnected && activeMode === 'goalstack' && (
-        <GoalStack
-          currentBalance={usdcBalanceNumber}
-          apy={apy}
-        />
-      )}
-
-      {/* LockBox Mode */}
-      {isConnected && activeMode === 'lockbox' && (
-        <LockBox currentBalance={usdcBalanceNumber} />
-      )}
-
-      {/* Vault Data — always visible */}
-      {!isConnected && (
-        <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
-          <h2 className="text-white font-bold text-xl mb-4">YO Vault — yoUSD</h2>
-          {loading && <p className="text-gray-400">Loading vault data...</p>}
-          {error && <p className="text-red-400">{error}</p>}
-          {!loading && !error && (
-            <div className="flex justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">APY</p>
-                <p className="text-green-400 text-2xl font-bold">{apy}%</p>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm">TVL</p>
-                <p className="text-white text-2xl font-bold">${tvl}</p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Modals */}
       {showDeposit && (
