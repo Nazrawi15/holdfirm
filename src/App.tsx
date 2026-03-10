@@ -14,6 +14,7 @@ import SavingsStreak from './components/SavingsStreak'
 import RecurringReminder from './components/RecurringReminder'
 import { UserStats } from './components/UserStats'
 import { DisciplineVaultPanel } from './components/DisciplineVaultPanel'
+import { OnboardingWizard } from './components/OnboardingWizard'
 
 const TABS = ['NestSave', 'GoalStack', 'LockBox', 'DisciplineVault', 'Streak & Habits'] as const
 type Tab = typeof TABS[number]
@@ -411,9 +412,17 @@ function Dashboard() {
 function App() {
   const { isConnected } = useAccount()
   const [started, setStarted] = useState(false)
+  const [showWizard, setShowWizard] = useState(false)
 
   if (!isConnected || !started) {
-    return <LandingPage onStart={() => setStarted(true)} />
+    return (
+      <>
+        <LandingPage onStart={() => setShowWizard(true)} />
+        {showWizard && (
+          <OnboardingWizard onComplete={() => { setShowWizard(false); setStarted(true) }} />
+        )}
+      </>
+    )
   }
 
   return <Dashboard />
