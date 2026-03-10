@@ -22,7 +22,6 @@ export function UserStats({ address }: UserStatsProps) {
         <p style={{ color: '#9ca3af', fontSize: '14px' }}>Loading SDK data...</p>
       )}
 
-      {/* Performance */}
       {performance && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
           <div style={{
@@ -50,7 +49,6 @@ export function UserStats({ address }: UserStatsProps) {
         </div>
       )}
 
-      {/* Wallet balances */}
       {balances && balances.assets.length > 0 && (
         <div style={{ marginBottom: '20px' }}>
           <p style={{ color: '#9ca3af', fontSize: '11px', fontWeight: 600, letterSpacing: '0.5px', margin: '0 0 10px 0' }}>WALLET ASSETS (VIA SDK)</p>
@@ -86,7 +84,6 @@ export function UserStats({ address }: UserStatsProps) {
         </div>
       )}
 
-      {/* Transaction history */}
       {history.length > 0 && (
         <div>
           <p style={{ color: '#9ca3af', fontSize: '11px', fontWeight: 600, letterSpacing: '0.5px', margin: '0 0 10px 0' }}>RECENT TRANSACTIONS (VIA SDK)</p>
@@ -102,9 +99,7 @@ export function UserStats({ address }: UserStatsProps) {
                 padding: '12px 16px',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '18px' }}>
-                    {tx.type === 'deposit' ? '↑' : '↓'}
-                  </span>
+                  <span style={{ fontSize: '18px' }}>{tx.type === 'deposit' ? '↑' : '↓'}</span>
                   <div>
                     <p style={{ color: '#111827', fontWeight: 700, fontSize: '14px', margin: 0, textTransform: 'capitalize' }}>
                       {tx.type}
