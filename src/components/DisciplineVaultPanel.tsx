@@ -246,7 +246,6 @@ export function DisciplineVaultPanel() {
       {/* Main actions */}
       {step === 'idle' && (
         <div>
-          {/* Lock period selector */}
           <p style={{ color: '#6b7280', fontSize: '12px', fontWeight: 600, margin: '0 0 8px 0' }}>CHOOSE LOCK PERIOD</p>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
             {lockOptions.map(opt => (
@@ -369,6 +368,52 @@ export function DisciplineVaultPanel() {
           </button>
         </div>
       )}
+
+      {/* Trust & Transparency */}
+      <div style={{ marginTop: '24px', backgroundColor: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
+        <p style={{ color: '#374151', fontSize: '13px', fontWeight: 700, margin: '0 0 12px 0' }}>🔍 Where do your funds go?</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+          {[
+            { label: 'Your Wallet', color: '#3b82f6', bg: '#eff6ff' },
+            { label: '→', color: '#9ca3af', bg: 'transparent' },
+            { label: 'DisciplineVault', color: '#7e22ce', bg: '#fdf4ff' },
+            { label: '→', color: '#9ca3af', bg: 'transparent' },
+            { label: 'YO Vault', color: '#15803d', bg: '#f0fdf4' },
+            { label: '→', color: '#9ca3af', bg: 'transparent' },
+            { label: 'yoUSD Yield', color: '#d97706', bg: '#fffbeb' },
+          ].map((item, i) => (
+            <span key={i} style={{
+              backgroundColor: item.bg,
+              color: item.color,
+              fontSize: '12px',
+              fontWeight: 600,
+              padding: item.label === '→' ? '0' : '4px 10px',
+              borderRadius: '6px',
+            }}>
+              {item.label}
+            </span>
+          ))}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '12px' }}>
+          <a href="https://basescan.org/address/0x85E535Af5663426D38461B2e74d34FafA8a7472a" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', fontSize: '12px', textDecoration: 'none', fontWeight: 600 }}>
+            🔗 DisciplineVault contract on Basescan →
+          </a>
+          <a href="https://basescan.org/address/0x0000000f2eb9f69274678c76222b35eec7588a65" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', fontSize: '12px', textDecoration: 'none', fontWeight: 600 }}>
+            🔗 YO Protocol vault on Basescan →
+          </a>
+          <a href="https://basescan.org/tx/0xba6c889a70eed58fe7c6440e77804f2ad2824503868745f19576261d36e52b9f" target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', fontSize: '12px', textDecoration: 'none', fontWeight: 600 }}>
+            ✅ Proof of real deposit transaction →
+          </a>
+        </div>
+        <div style={{ marginTop: '12px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '10px' }}>
+          <p style={{ color: '#92400e', fontSize: '12px', margin: 0, lineHeight: 1.6 }}>
+            ⚠️ <strong>Risk disclosure:</strong> HoldFirm is non-custodial. Your funds are held by smart contracts, not by us.
+            DisciplineVault is unaudited — only deposit what you can afford to lose.
+            YO Protocol vault risk applies. Early withdrawal incurs a 4.5% penalty redistributed to other savers.
+          </p>
+        </div>
+      </div>
+
     </div>
   )
 }
