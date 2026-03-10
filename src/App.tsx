@@ -8,6 +8,7 @@ import { DepositModal } from './components/DepositModal'
 import { RedeemModal } from './components/RedeemModal'
 import { InflationCounter } from './components/InflationCounter'
 import { CurrencySelector } from './components/CurrencySelector'
+import { GoalStack } from './components/GoalStack'
 
 function App() {
   const { apy, tvl, loading, error } = useYoVault()
@@ -82,6 +83,14 @@ function App() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* GoalStack */}
+      {isConnected && (
+        <GoalStack
+          currentBalance={usdcBalanceNumber}
+          apy={apy}
+        />
       )}
 
       {/* Vault Data */}
