@@ -13,8 +13,9 @@ import { LockBox } from './components/LockBox'
 import SavingsStreak from './components/SavingsStreak'
 import RecurringReminder from './components/RecurringReminder'
 import { UserStats } from './components/UserStats'
+import { DisciplineVaultPanel } from './components/DisciplineVaultPanel'
 
-const TABS = ['NestSave', 'GoalStack', 'LockBox', 'Streak & Habits'] as const
+const TABS = ['NestSave', 'GoalStack', 'LockBox', 'DisciplineVault', 'Streak & Habits'] as const
 type Tab = typeof TABS[number]
 
 function LandingPage({ onStart }: { onStart: () => void }) {
@@ -26,7 +27,6 @@ function LandingPage({ onStart }: { onStart: () => void }) {
       display: 'flex',
       flexDirection: 'column',
     }}>
-      {/* Top nav */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -44,7 +44,6 @@ function LandingPage({ onStart }: { onStart: () => void }) {
           }}>🔒</div>
           <span style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }}>HoldFirm</span>
         </div>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
             background: '#f0fdf4',
@@ -61,7 +60,6 @@ function LandingPage({ onStart }: { onStart: () => void }) {
         </div>
       </div>
 
-      {/* Hero */}
       <div style={{
         flex: 1,
         display: 'flex',
@@ -72,8 +70,6 @@ function LandingPage({ onStart }: { onStart: () => void }) {
         textAlign: 'center',
         gap: '24px',
       }}>
-
-        {/* Badge */}
         <div style={{
           background: '#f0fdf4',
           border: '1px solid #bbf7d0',
@@ -87,7 +83,6 @@ function LandingPage({ onStart }: { onStart: () => void }) {
           POWERED BY YO PROTOCOL · 4.92% APY
         </div>
 
-        {/* Headline */}
         <div>
           <h1 style={{
             color: '#111827',
@@ -124,13 +119,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
           no matter where you live or what your currency does.
         </p>
 
-        {/* Stats row */}
-        <div style={{
-          display: 'flex',
-          gap: '12px',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-        }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
           {[
             { label: 'APY', value: '4.92%', color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
             { label: 'Total Protected', value: '$39M+', color: '#111827', bg: 'white', border: '#e5e7eb' },
@@ -152,27 +141,13 @@ function LandingPage({ onStart }: { onStart: () => void }) {
           ))}
         </div>
 
-        {/* Flags */}
-        <div style={{
-          display: 'flex',
-          gap: '8px',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          maxWidth: '400px',
-        }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '400px' }}>
           {['🇳🇬', '🇹🇷', '🇦🇷', '🇵🇰', '🇪🇬', '🇬🇭', '🇪🇹', '🇺🇦', '🇷🇴', '🇮🇩', '🇬🇪', '🇦🇴'].map(flag => (
             <span key={flag} style={{ fontSize: '26px' }}>{flag}</span>
           ))}
         </div>
 
-        {/* Why section */}
-        <div style={{
-          display: 'flex',
-          gap: '16px',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          maxWidth: '600px',
-        }}>
+        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '600px' }}>
           {[
             { icon: '📉', title: 'Beat inflation', desc: 'Earn 4.92% APY while your local currency loses value' },
             { icon: '🔒', title: 'Your keys', desc: 'Non-custodial. Your wallet, your money, always' },
@@ -195,46 +170,29 @@ function LandingPage({ onStart }: { onStart: () => void }) {
           ))}
         </div>
 
-        {/* CTA */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
           <ConnectButton.Custom>
             {({ account, openConnectModal, mounted }) => {
               if (!mounted) return null
               if (!account) {
                 return (
-                  <button
-                    onClick={openConnectModal}
-                    style={{
-                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                      color: 'white',
-                      fontWeight: 800,
-                      fontSize: '17px',
-                      padding: '16px 44px',
-                      borderRadius: '14px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 20px rgba(34,197,94,0.35)',
-                    }}
-                  >
+                  <button onClick={openConnectModal} style={{
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    color: 'white', fontWeight: 800, fontSize: '17px',
+                    padding: '16px 44px', borderRadius: '14px', border: 'none',
+                    cursor: 'pointer', boxShadow: '0 4px 20px rgba(34,197,94,0.35)',
+                  }}>
                     Connect Wallet to Start Saving →
                   </button>
                 )
               }
               return (
-                <button
-                  onClick={onStart}
-                  style={{
-                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                    color: 'white',
-                    fontWeight: 800,
-                    fontSize: '17px',
-                    padding: '16px 44px',
-                    borderRadius: '14px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 20px rgba(34,197,94,0.35)',
-                  }}
-                >
+                <button onClick={onStart} style={{
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                  color: 'white', fontWeight: 800, fontSize: '17px',
+                  padding: '16px 44px', borderRadius: '14px', border: 'none',
+                  cursor: 'pointer', boxShadow: '0 4px 20px rgba(34,197,94,0.35)',
+                }}>
                   Start Saving Now →
                 </button>
               )
@@ -270,8 +228,6 @@ function Dashboard() {
       backgroundColor: '#eef1f6',
       fontFamily: '"DM Sans", -apple-system, BlinkMacSystemFont, sans-serif',
     }}>
-
-      {/* Top navbar */}
       <div style={{
         backgroundColor: 'white',
         borderBottom: '1px solid #e5e7eb',
@@ -311,28 +267,15 @@ function Dashboard() {
         <ConnectButton />
       </div>
 
-      {/* Main content */}
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px 16px' }}>
 
-        {/* Currency + Inflation row */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            padding: '20px',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-          }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
             <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, letterSpacing: '0.5px', margin: '0 0 12px 0' }}>YOUR LOCAL CURRENCY</p>
             <CurrencySelector selected={selectedCurrency} onChange={setSelectedCurrency} />
           </div>
-
           {selectedCurrencyData && (
-            <div style={{
-              backgroundColor: 'white',
-              borderRadius: '16px',
-              padding: '20px',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-            }}>
+            <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
               <InflationCounter
                 usdcBalance={usdcBalanceNumber}
                 inflationRate={selectedCurrencyData.inflation}
@@ -343,14 +286,7 @@ function Dashboard() {
           )}
         </div>
 
-        {/* Savings card */}
-        <div style={{
-          backgroundColor: 'white',
-          borderRadius: '16px',
-          padding: '24px',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-          marginBottom: '16px',
-        }}>
+        <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginBottom: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, letterSpacing: '0.5px', margin: '0 0 4px 0' }}>YOUR SAVINGS</p>
@@ -365,49 +301,32 @@ function Dashboard() {
               </p>
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                onClick={() => setShowDeposit(true)}
-                style={{
-                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                  color: 'white',
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  padding: '12px 28px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(34,197,94,0.25)',
-                }}
-              >
+              <button onClick={() => setShowDeposit(true)} style={{
+                background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                color: 'white', fontWeight: 700, fontSize: '14px',
+                padding: '12px 28px', borderRadius: '12px', border: 'none',
+                cursor: 'pointer', boxShadow: '0 4px 12px rgba(34,197,94,0.25)',
+              }}>
                 ↑ Deposit
               </button>
-              <button
-                onClick={() => setShowRedeem(true)}
-                style={{
-                  backgroundColor: '#eff6ff',
-                  border: '1px solid #bfdbfe',
-                  color: '#3b82f6',
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  padding: '12px 28px',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                }}
-              >
+              <button onClick={() => setShowRedeem(true)} style={{
+                backgroundColor: '#eff6ff', border: '1px solid #bfdbfe',
+                color: '#3b82f6', fontWeight: 700, fontSize: '14px',
+                padding: '12px 28px', borderRadius: '12px', cursor: 'pointer',
+              }}>
                 ↓ Withdraw
               </button>
             </div>
           </div>
         </div>
 
-        {/* Tab navigation */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
           {TABS.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                padding: '8px 20px',
+                padding: '8px 16px',
                 borderRadius: '20px',
                 border: activeTab === tab ? 'none' : '1px solid #e5e7eb',
                 cursor: 'pointer',
@@ -421,18 +340,14 @@ function Dashboard() {
             >
               {tab === 'NestSave' ? '💰 NestSave' :
                tab === 'GoalStack' ? '🎯 GoalStack' :
-               tab === 'LockBox' ? '🔒 LockBox' : '🔥 Streak & Habits'}
+               tab === 'LockBox' ? '🔒 LockBox' :
+               tab === 'DisciplineVault' ? '🏦 DisciplineVault' :
+               '🔥 Streak & Habits'}
             </button>
           ))}
         </div>
 
-        {/* Tab content */}
-        <div style={{
-          backgroundColor: 'white',
-          borderRadius: '16px',
-          padding: '24px',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-        }}>
+        <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           {activeTab === 'NestSave' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -442,13 +357,7 @@ function Dashboard() {
                     Your savings in dollars, earning yield every day.
                   </p>
                 </div>
-                <div style={{
-                  background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
-                  border: '1px solid #bbf7d0',
-                  borderRadius: '12px',
-                  padding: '10px 20px',
-                  textAlign: 'center',
-                }}>
+                <div style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '10px 20px', textAlign: 'center' }}>
                   <div style={{ color: '#16a34a', fontSize: '24px', fontWeight: 800 }}>{apy}%</div>
                   <div style={{ color: '#16a34a', fontSize: '11px', fontWeight: 600 }}>LIVE APY</div>
                 </div>
@@ -459,12 +368,7 @@ function Dashboard() {
                   { label: 'Your Balance', value: `$${usdcBalance}`, sub: 'in USDC' },
                   { label: 'Local Value', value: `${selectedCurrencyData?.flag} ${selectedCurrency} ${localBalance}`, sub: 'at current rate' },
                 ].map(card => (
-                  <div key={card.label} style={{
-                    backgroundColor: '#f9fafb',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    border: '1px solid #f3f4f6',
-                  }}>
+                  <div key={card.label} style={{ backgroundColor: '#f9fafb', borderRadius: '12px', padding: '16px', border: '1px solid #f3f4f6' }}>
                     <p style={{ color: '#9ca3af', fontSize: '11px', fontWeight: 600, letterSpacing: '0.5px', margin: '0 0 4px 0' }}>{card.label.toUpperCase()}</p>
                     <p style={{ color: '#111827', fontSize: '18px', fontWeight: 800, margin: '0 0 2px 0' }}>{card.value}</p>
                     <p style={{ color: '#d1d5db', fontSize: '12px', margin: 0 }}>{card.sub}</p>
@@ -480,6 +384,10 @@ function Dashboard() {
 
           {activeTab === 'LockBox' && (
             <LockBox currentBalance={usdcBalanceNumber} />
+          )}
+
+          {activeTab === 'DisciplineVault' && (
+            <DisciplineVaultPanel />
           )}
 
           {activeTab === 'Streak & Habits' && (
