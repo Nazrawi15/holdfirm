@@ -1,10 +1,13 @@
-export const DISCIPLINE_VAULT_ADDRESS = '0x62B092e90c227478Cf51520f83C9E1CbaC99e415' as `0x${string}`
+export const DISCIPLINE_VAULT_ADDRESS = '0x85E535Af5663426D38461B2e74d34FafA8a7472a' as `0x${string}`
 
 export const USDC_MAINNET = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as `0x${string}`
 
 export const DISCIPLINE_VAULT_ABI = [
   {
-    "inputs": [{ "internalType": "uint256", "name": "usdcAmount", "type": "uint256" }],
+    "inputs": [
+      { "internalType": "uint256", "name": "usdcAmount", "type": "uint256" },
+      { "internalType": "uint256", "name": "lockDays", "type": "uint256" }
+    ],
     "name": "deposit",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -40,6 +43,20 @@ export const DISCIPLINE_VAULT_ABI = [
   },
   {
     "inputs": [{ "internalType": "address", "name": "userAddr", "type": "address" }],
+    "name": "getTotalEarnedFromPenalties",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "userAddr", "type": "address" }],
+    "name": "getUserLockPeriod",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "userAddr", "type": "address" }],
     "name": "isLocked",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
@@ -68,7 +85,7 @@ export const DISCIPLINE_VAULT_ABI = [
   },
   {
     "inputs": [],
-    "name": "accRewardPerShare",
+    "name": "totalPenaltyCollected",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -78,7 +95,8 @@ export const DISCIPLINE_VAULT_ABI = [
     "inputs": [
       { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "usdcAmount", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "shares", "type": "uint256" }
+      { "indexed": false, "internalType": "uint256", "name": "shares", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "lockDays", "type": "uint256" }
     ],
     "name": "Deposited",
     "type": "event"
@@ -88,7 +106,8 @@ export const DISCIPLINE_VAULT_ABI = [
     "inputs": [
       { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "usdcAmount", "type": "uint256" },
-      { "indexed": false, "internalType": "bool", "name": "early", "type": "bool" }
+      { "indexed": false, "internalType": "bool", "name": "early", "type": "bool" },
+      { "indexed": false, "internalType": "uint256", "name": "penaltyShares", "type": "uint256" }
     ],
     "name": "Withdrawn",
     "type": "event"
@@ -96,7 +115,8 @@ export const DISCIPLINE_VAULT_ABI = [
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+      { "indexed": false, "internalType": "uint256", "name": "penaltyShares", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "remainingStakers", "type": "uint256" }
     ],
     "name": "PenaltyDistributed",
     "type": "event"
