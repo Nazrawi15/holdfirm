@@ -9,6 +9,7 @@ import { RedeemModal } from './components/RedeemModal'
 import { InflationCounter } from './components/InflationCounter'
 import { CurrencySelector } from './components/CurrencySelector'
 import { GoalStack } from './components/GoalStack'
+import { LockBox } from './components/LockBox'
 
 function App() {
   const { apy, tvl, loading, error } = useYoVault()
@@ -17,6 +18,7 @@ function App() {
   const [showDeposit, setShowDeposit] = useState(false)
   const [showRedeem, setShowRedeem] = useState(false)
   const [selectedCurrency, setSelectedCurrency] = useState('NGN')
+  const [activeMode, setActiveMode] = useState<'nestsave' | 'goalstack' | 'lockbox'>('nestsave')
 
   const { rate } = useCurrencyRate(selectedCurrency)
   const usdcBalanceNumber = parseFloat(usdcBalance)
@@ -85,27 +87,49 @@ function App() {
         </div>
       )}
 
-      {/* GoalStack */}
+      {/* Mode Switcher */}
       {isConnected && (
-        <GoalStack
-          currentBalance={usdcBalanceNumber}
-          apy={apy}
-        />
+        <div className="flex gap-2 w-full max-w-md">
+          <button
+            onClick={() => setActiveMode('nestsave')}
+            className={`flex-1 py-3 rounded-xl font-bold text-sm ${
+              activeMode === 'nestsave'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            NestSave
+          </button>
+          <button
+            onClick={() => setActiveMode('goalstack')}
+            className={`flex-1 py-3 rounded-xl font-bold text-sm ${
+              activeMode === 'goalstack'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            GoalStack
+          </button>
+          <button
+            onClick={() => setActiveMode('lockbox')}
+            className={`flex-1 py-3 rounded-xl font-bold text-sm ${
+              activeMode === 'lockbox'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            LockBox
+          </button>
+        </div>
       )}
 
-      {/* Vault Data */}
-      <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
-        <h2 className="text-white font-bold text-xl mb-4">YO Vault — yoUSD</h2>
-
-        {loading && (
-          <p className="text-gray-400">Loading vault data...</p>
-        )}
-
-        {error && (
-          <p className="text-red-400">{error}</p>
-        )}
-
-        {!loading && !error && (
+      {/* NestSave Mode */}
+      {isConnected && activeMode === 'nestsave' && (
+        <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
+          <h2 className="text-white font-bold text-xl mb-2">NestSave</h2>
+          <p className="text-gray-400 text-sm mb-4">
+            Your savings in dollars, earning yield every day.
+          </p>
           <div className="flex justify-between">
             <div>
               <p className="text-gray-400 text-sm">APY</p>
@@ -116,8 +140,42 @@ function App() {
               <p className="text-white text-2xl font-bold">${tvl}</p>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* GoalStack Mode */}
+      {isConnected && activeMode === 'goalstack' && (
+        <GoalStack
+          currentBalance={usdcBalanceNumber}
+          apy={apy}
+        />
+      )}
+
+      {/* LockBox Mode */}
+      {isConnected && activeMode === 'lockbox' && (
+        <LockBox currentBalance={usdcBalanceNumber} />
+      )}
+
+      {/* Vault Data — always visible */}
+      {!isConnected && (
+        <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
+          <h2 className="text-white font-bold text-xl mb-4">YO Vault — yoUSD</h2>
+          {loading && <p className="text-gray-400">Loading vault data...</p>}
+          {error && <p className="text-red-400">{error}</p>}
+          {!loading && !error && (
+            <div className="flex justify-between">
+              <div>
+                <p className="text-gray-400 text-sm">APY</p>
+                <p className="text-green-400 text-2xl font-bold">{apy}%</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">TVL</p>
+                <p className="text-white text-2xl font-bold">${tvl}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Modals */}
       {showDeposit && (
