@@ -3,25 +3,226 @@ import { useYoVault } from './hooks/useYoVault'
 import { useUSDCBalance } from './hooks/useUSDCBalance'
 import { useCurrencyRate, CURRENCIES } from './hooks/useCurrencyRate'
 import { useAccount } from 'wagmi'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { DepositModal } from './components/DepositModal'
 import { RedeemModal } from './components/RedeemModal'
 import { InflationCounter } from './components/InflationCounter'
 import { CurrencySelector } from './components/CurrencySelector'
 import { GoalStack } from './components/GoalStack'
 import { LockBox } from './components/LockBox'
-import { Navbar } from './components/Navbar'
-import { Hero } from './components/Hero'
 import SavingsStreak from './components/SavingsStreak'
 import RecurringReminder from './components/RecurringReminder'
 
-function App() {
+const TABS = ['NestSave', 'GoalStack', 'LockBox', 'Streak & Habits'] as const
+type Tab = typeof TABS[number]
+
+function LandingPage({ onStart }: { onStart: () => void }) {
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0f1117 0%, #0a1628 50%, #0f1117 100%)',
+      fontFamily: '"DM Sans", -apple-system, BlinkMacSystemFont, sans-serif',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      {/* Top nav */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '20px 40px',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            width: '36px', height: '36px', borderRadius: '10px',
+            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '18px',
+          }}>🔒</div>
+          <span style={{ color: 'white', fontWeight: 700, fontSize: '18px', letterSpacing: '-0.3px' }}>HoldFirm</span>
+        </div>
+        <div style={{
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '20px',
+          padding: '6px 16px',
+          color: '#22c55e',
+          fontSize: '13px',
+          fontWeight: 600,
+        }}>
+          🟢 Live on Base
+        </div>
+      </div>
+
+      {/* Hero */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '60px 24px',
+        textAlign: 'center',
+        gap: '28px',
+      }}>
+        {/* Badge */}
+        <div style={{
+          background: 'rgba(34,197,94,0.1)',
+          border: '1px solid rgba(34,197,94,0.25)',
+          borderRadius: '20px',
+          padding: '6px 16px',
+          color: '#22c55e',
+          fontSize: '13px',
+          fontWeight: 600,
+          letterSpacing: '0.5px',
+        }}>
+          POWERED BY YO PROTOCOL · 4.92% APY
+        </div>
+
+        {/* Main headline */}
+        <div>
+          <h1 style={{
+            color: 'white',
+            fontSize: 'clamp(36px, 6vw, 72px)',
+            fontWeight: 800,
+            lineHeight: 1.1,
+            letterSpacing: '-2px',
+            margin: 0,
+            marginBottom: '8px',
+          }}>
+            Inflation doesn't ask<br />
+            <span style={{
+              background: 'linear-gradient(90deg, #22c55e, #4ade80)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>permission.</span>
+          </h1>
+          <h1 style={{
+            color: 'white',
+            fontSize: 'clamp(36px, 6vw, 72px)',
+            fontWeight: 800,
+            lineHeight: 1.1,
+            letterSpacing: '-2px',
+            margin: 0,
+          }}>
+            HoldFirm does.
+          </h1>
+        </div>
+
+        <p style={{
+          color: '#9ca3af',
+          fontSize: '18px',
+          maxWidth: '520px',
+          lineHeight: 1.6,
+          margin: 0,
+        }}>
+          Save in dollars. Earn real yield. Protect everything you've built —
+          no matter where you live or what your currency does.
+        </p>
+
+        {/* Stats row */}
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}>
+          {[
+            { label: 'APY', value: '4.92%', color: '#22c55e' },
+            { label: 'Total Protected', value: '$39M+', color: 'white' },
+            { label: 'Currencies', value: '12', color: 'white' },
+            { label: 'Chain', value: 'Base', color: '#60a5fa' },
+          ].map(stat => (
+            <div key={stat.label} style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '14px',
+              padding: '14px 20px',
+              textAlign: 'center',
+              minWidth: '100px',
+            }}>
+              <div style={{ color: stat.color, fontSize: '22px', fontWeight: 800 }}>{stat.value}</div>
+              <div style={{ color: '#6b7280', fontSize: '12px', marginTop: '2px' }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Countries */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          maxWidth: '480px',
+        }}>
+          {['🇳🇬', '🇹🇷', '🇦🇷', '🇵🇰', '🇪🇬', '🇬🇭', '🇪🇹', '🇺🇦', '🇷🇴', '🇮🇩', '🇬🇪', '🇦🇴'].map(flag => (
+            <span key={flag} style={{ fontSize: '24px' }}>{flag}</span>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <ConnectButton.Custom>
+            {({ account, chain, openConnectModal, mounted }) => {
+              if (!mounted) return null
+              if (!account) {
+                return (
+                  <button
+                    onClick={openConnectModal}
+                    style={{
+                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                      color: 'white',
+                      fontWeight: 800,
+                      fontSize: '18px',
+                      padding: '18px 48px',
+                      borderRadius: '16px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      letterSpacing: '-0.3px',
+                      boxShadow: '0 0 40px rgba(34,197,94,0.3)',
+                    }}
+                  >
+                    Connect Wallet to Start Saving →
+                  </button>
+                )
+              }
+              return (
+                <button
+                  onClick={onStart}
+                  style={{
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    color: 'white',
+                    fontWeight: 800,
+                    fontSize: '18px',
+                    padding: '18px 48px',
+                    borderRadius: '16px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    letterSpacing: '-0.3px',
+                    boxShadow: '0 0 40px rgba(34,197,94,0.3)',
+                  }}
+                >
+                  Start Saving Now →
+                </button>
+              )
+            }}
+          </ConnectButton.Custom>
+          <p style={{ color: '#4b5563', fontSize: '13px' }}>No sign-up. No KYC. Just connect and save.</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Dashboard() {
   const { apy, tvl, loading } = useYoVault()
   const { formatted: usdcBalance } = useUSDCBalance()
   const { isConnected } = useAccount()
   const [showDeposit, setShowDeposit] = useState(false)
   const [showRedeem, setShowRedeem] = useState(false)
-  const [selectedCurrency, setSelectedCurrency] = useState('NGN')
-  const [activeMode, setActiveMode] = useState<'nestsave' | 'goalstack' | 'lockbox'>('nestsave')
+  const [selectedCurrency, setSelectedCurrency] = useState('TRY')
+  const [activeTab, setActiveTab] = useState<Tab>('NestSave')
 
   const { rate } = useCurrencyRate(selectedCurrency)
   const usdcBalanceNumber = parseFloat(usdcBalance)
@@ -29,240 +230,255 @@ function App() {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })
-
   const selectedCurrencyData = CURRENCIES.find(c => c.code === selectedCurrency)
 
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#030712',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+      backgroundColor: '#eef1f6',
+      fontFamily: '"DM Sans", -apple-system, BlinkMacSystemFont, sans-serif',
     }}>
 
-      <Navbar />
-
+      {/* Top navbar */}
       <div style={{
-        position: 'fixed',
-        top: '0',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '600px',
-        height: '400px',
-        background: 'radial-gradient(ellipse, rgba(34,197,94,0.08) 0%, transparent 70%)',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }} />
-
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
+        backgroundColor: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        padding: '0 24px',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        gap: '24px',
-        padding: '100px 16px 60px 16px',
+        justifyContent: 'space-between',
+        height: '60px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
       }}>
-
-        <Hero
-          apy={loading ? '...' : apy}
-          tvl={loading ? '...' : tvl}
-          onGetStarted={() => {}}
-          isConnected={isConnected}
-        />
-
-        <div style={{ width: '100%', maxWidth: '480px' }}>
-          <CurrencySelector selected={selectedCurrency} onChange={setSelectedCurrency} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            width: '32px', height: '32px', borderRadius: '8px',
+            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '16px',
+          }}>🔒</div>
+          <span style={{ color: '#111827', fontWeight: 700, fontSize: '16px' }}>HoldFirm</span>
         </div>
 
-        {selectedCurrencyData && (
-          <div style={{ width: '100%', maxWidth: '480px' }}>
-            <InflationCounter
-              usdcBalance={usdcBalanceNumber}
-              inflationRate={selectedCurrencyData.inflation}
-              currencyCode={selectedCurrency}
-              currencyRate={rate}
-            />
-          </div>
-        )}
+        {/* Stats bar */}
+        <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+          {[
+            { label: 'APY', value: loading ? '...' : `${apy}%`, color: '#22c55e' },
+            { label: 'TVL', value: loading ? '...' : `$${tvl}`, color: '#111827' },
+            { label: 'YOUR BALANCE', value: `$${usdcBalance}`, color: '#111827' },
+            { label: 'CHAIN', value: '● Base', color: '#3b82f6' },
+          ].map(s => (
+            <div key={s.label} style={{ textAlign: 'center' }}>
+              <div style={{ color: s.color, fontWeight: 700, fontSize: '15px' }}>{s.value}</div>
+              <div style={{ color: '#9ca3af', fontSize: '10px', letterSpacing: '0.5px' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
 
-        {isConnected && (
+        <ConnectButton />
+      </div>
+
+      {/* Main content */}
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px 16px' }}>
+
+        {/* Currency + Inflation row */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div style={{
-            width: '100%',
-            maxWidth: '480px',
-            backgroundColor: '#111827',
-            borderRadius: '24px',
-            padding: '24px',
-            border: '1px solid rgba(255,255,255,0.08)',
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '20px',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
           }}>
-            <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '4px' }}>Your Savings</p>
-            <p style={{ color: 'white', fontSize: '36px', fontWeight: 800, marginBottom: '4px' }}>
-              ${usdcBalance} USDC
-            </p>
-            <p style={{ color: '#22c55e', fontSize: '16px', marginBottom: '4px' }}>
-              {selectedCurrencyData?.flag} {selectedCurrency} {localBalance}
-            </p>
-            <p style={{ color: '#4b5563', fontSize: '13px', marginBottom: '20px' }}>
-              Earning {apy}% APY — protected from inflation
-            </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <p style={{ color: '#6b7280', fontSize: '12px', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '12px' }}>YOUR LOCAL CURRENCY</p>
+            <CurrencySelector selected={selectedCurrency} onChange={setSelectedCurrency} />
+          </div>
+
+          {selectedCurrencyData && (
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              padding: '20px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+            }}>
+              <InflationCounter
+                usdcBalance={usdcBalanceNumber}
+                inflationRate={selectedCurrencyData.inflation}
+                currencyCode={selectedCurrency}
+                currencyRate={rate}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Savings card */}
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '24px',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+          marginBottom: '16px',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, letterSpacing: '0.5px', margin: 0 }}>YOUR SAVINGS</p>
+              <p style={{ color: '#111827', fontSize: '36px', fontWeight: 800, margin: '4px 0', letterSpacing: '-1px' }}>
+                ${usdcBalance} <span style={{ fontSize: '18px', color: '#6b7280', fontWeight: 600 }}>USDC</span>
+              </p>
+              <p style={{ color: '#22c55e', fontSize: '15px', fontWeight: 600, margin: 0 }}>
+                {selectedCurrencyData?.flag} {selectedCurrency} {localBalance}
+              </p>
+              <p style={{ color: '#9ca3af', fontSize: '13px', margin: '4px 0 0 0' }}>
+                Earning {apy}% APY — protected from inflation
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 onClick={() => setShowDeposit(true)}
                 style={{
-                  flex: 1,
                   background: 'linear-gradient(135deg, #22c55e, #16a34a)',
                   color: 'white',
                   fontWeight: 700,
-                  fontSize: '16px',
-                  padding: '14px',
-                  borderRadius: '14px',
+                  fontSize: '14px',
+                  padding: '12px 28px',
+                  borderRadius: '12px',
                   border: 'none',
                   cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(34,197,94,0.3)',
                 }}
               >
-                Deposit
+                ↑ Deposit
               </button>
               <button
                 onClick={() => setShowRedeem(true)}
                 style={{
-                  flex: 1,
-                  backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                  color: '#60a5fa',
+                  backgroundColor: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                  color: '#3b82f6',
                   fontWeight: 700,
-                  fontSize: '16px',
-                  padding: '14px',
-                  borderRadius: '14px',
-                  cursor: 'pointer',
-                }}
-              >
-                Withdraw
-              </button>
-            </div>
-          </div>
-        )}
-
-        {isConnected && (
-          <div style={{
-            width: '100%',
-            maxWidth: '480px',
-            display: 'flex',
-            gap: '8px',
-            backgroundColor: '#111827',
-            borderRadius: '16px',
-            padding: '6px',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}>
-            {(['nestsave', 'goalstack', 'lockbox'] as const).map(mode => (
-              <button
-                key={mode}
-                onClick={() => setActiveMode(mode)}
-                style={{
-                  flex: 1,
-                  padding: '10px',
+                  fontSize: '14px',
+                  padding: '12px 28px',
                   borderRadius: '12px',
-                  border: 'none',
                   cursor: 'pointer',
-                  fontWeight: 700,
-                  fontSize: '13px',
-                  backgroundColor: activeMode === mode ? '#22c55e' : 'transparent',
-                  color: activeMode === mode ? 'white' : '#6b7280',
-                  transition: 'all 0.2s',
                 }}
               >
-                {mode === 'nestsave' ? 'NestSave' : mode === 'goalstack' ? 'GoalStack' : 'LockBox'}
+                ↓ Withdraw
               </button>
-            ))}
-          </div>
-        )}
-
-        {isConnected && activeMode === 'nestsave' && (
-          <div style={{
-            width: '100%',
-            maxWidth: '480px',
-            backgroundColor: '#111827',
-            borderRadius: '24px',
-            padding: '24px',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}>
-            <h2 style={{ color: 'white', fontWeight: 800, fontSize: '20px', marginBottom: '8px' }}>
-              NestSave
-            </h2>
-            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '20px' }}>
-              Your savings in dollars, earning yield every day.
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '13px' }}>Current APY</p>
-                <p style={{ color: '#22c55e', fontSize: '28px', fontWeight: 800 }}>{apy}%</p>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <p style={{ color: '#6b7280', fontSize: '13px' }}>Total Locked</p>
-                <p style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>${tvl}</p>
-              </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {isConnected && activeMode === 'goalstack' && (
-          <div style={{ width: '100%', maxWidth: '480px' }}>
+        {/* Tab navigation */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '16px',
+        }}>
+          {TABS.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: '8px 20px',
+                borderRadius: '20px',
+                border: activeTab === tab ? 'none' : '1px solid #e5e7eb',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '13px',
+                backgroundColor: activeTab === tab ? '#111827' : 'white',
+                color: activeTab === tab ? 'white' : '#6b7280',
+                transition: 'all 0.15s',
+                boxShadow: activeTab === tab ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
+              }}
+            >
+              {tab === 'NestSave' ? '💰 NestSave' :
+               tab === 'GoalStack' ? '🎯 GoalStack' :
+               tab === 'LockBox' ? '🔒 LockBox' : '🔥 Streak & Habits'}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab content */}
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '24px',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+        }}>
+          {activeTab === 'NestSave' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div>
+                  <h2 style={{ color: '#111827', fontWeight: 800, fontSize: '20px', margin: 0 }}>NestSave</h2>
+                  <p style={{ color: '#9ca3af', fontSize: '14px', margin: '4px 0 0 0' }}>
+                    Your savings in dollars, earning yield every day.
+                  </p>
+                </div>
+                <div style={{
+                  background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
+                  border: '1px solid #bbf7d0',
+                  borderRadius: '12px',
+                  padding: '10px 20px',
+                  textAlign: 'center',
+                }}>
+                  <div style={{ color: '#22c55e', fontSize: '24px', fontWeight: 800 }}>{apy}%</div>
+                  <div style={{ color: '#16a34a', fontSize: '11px', fontWeight: 600 }}>LIVE APY</div>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                {[
+                  { label: 'Total Value Locked', value: `$${tvl}`, sub: 'across all savers' },
+                  { label: 'Your Balance', value: `$${usdcBalance}`, sub: 'in USDC' },
+                  { label: 'Local Value', value: `${selectedCurrencyData?.flag} ${selectedCurrency} ${localBalance}`, sub: 'at current rate' },
+                ].map(card => (
+                  <div key={card.label} style={{
+                    backgroundColor: '#f9fafb',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    border: '1px solid #f3f4f6',
+                  }}>
+                    <p style={{ color: '#9ca3af', fontSize: '11px', fontWeight: 600, letterSpacing: '0.5px', margin: 0 }}>{card.label.toUpperCase()}</p>
+                    <p style={{ color: '#111827', fontSize: '18px', fontWeight: 800, margin: '4px 0 2px 0' }}>{card.value}</p>
+                    <p style={{ color: '#d1d5db', fontSize: '12px', margin: 0 }}>{card.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'GoalStack' && (
             <GoalStack currentBalance={usdcBalanceNumber} apy={apy} />
-          </div>
-        )}
+          )}
 
-        {isConnected && activeMode === 'lockbox' && (
-          <div style={{ width: '100%', maxWidth: '480px' }}>
+          {activeTab === 'LockBox' && (
             <LockBox currentBalance={usdcBalanceNumber} />
-          </div>
-        )}
+          )}
 
-        {/* Streak + Reminder — always visible when connected */}
-        {isConnected && (
-          <>
-            <div style={{ width: '100%', maxWidth: '480px' }}>
+          {activeTab === 'Streak & Habits' && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <SavingsStreak />
-            </div>
-            <div style={{ width: '100%', maxWidth: '480px' }}>
               <RecurringReminder />
             </div>
-          </>
-        )}
-
-        {!isConnected && (
-          <div style={{
-            width: '100%',
-            maxWidth: '480px',
-            backgroundColor: '#111827',
-            borderRadius: '24px',
-            padding: '24px',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}>
-            <h2 style={{ color: 'white', fontWeight: 700, fontSize: '18px', marginBottom: '16px' }}>
-              YO Vault — yoUSD
-            </h2>
-            {loading ? (
-              <p style={{ color: '#6b7280' }}>Loading vault data...</p>
-            ) : (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                  <p style={{ color: '#6b7280', fontSize: '13px' }}>APY</p>
-                  <p style={{ color: '#22c55e', fontSize: '28px', fontWeight: 800 }}>{apy}%</p>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ color: '#6b7280', fontSize: '13px' }}>TVL</p>
-                  <p style={{ color: 'white', fontSize: '28px', fontWeight: 800 }}>${tvl}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
+          )}
+        </div>
       </div>
 
       {showDeposit && <DepositModal onClose={() => setShowDeposit(false)} />}
       {showRedeem && <RedeemModal onClose={() => setShowRedeem(false)} />}
-
     </div>
   )
+}
+
+function App() {
+  const { isConnected } = useAccount()
+  const [started, setStarted] = useState(false)
+
+  if (!isConnected || !started) {
+    return <LandingPage onStart={() => setStarted(true)} />
+  }
+
+  return <Dashboard />
 }
 
 export default App
