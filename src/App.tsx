@@ -20,7 +20,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f1117 0%, #0a1628 50%, #0f1117 100%)',
+      backgroundColor: '#f8fafc',
       fontFamily: '"DM Sans", -apple-system, BlinkMacSystemFont, sans-serif',
       display: 'flex',
       flexDirection: 'column',
@@ -30,8 +30,9 @@ function LandingPage({ onStart }: { onStart: () => void }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '20px 40px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        padding: '16px 40px',
+        backgroundColor: 'white',
+        borderBottom: '1px solid #e5e7eb',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
@@ -40,16 +41,16 @@ function LandingPage({ onStart }: { onStart: () => void }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '18px',
           }}>🔒</div>
-          <span style={{ color: 'white', fontWeight: 700, fontSize: '18px', letterSpacing: '-0.3px' }}>HoldFirm</span>
+          <span style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }}>HoldFirm</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            background: 'rgba(34,197,94,0.12)',
-            border: '1px solid rgba(34,197,94,0.25)',
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
             borderRadius: '20px',
             padding: '6px 14px',
-            color: '#4ade80',
+            color: '#15803d',
             fontSize: '13px',
             fontWeight: 600,
           }}>
@@ -70,13 +71,14 @@ function LandingPage({ onStart }: { onStart: () => void }) {
         textAlign: 'center',
         gap: '24px',
       }}>
+
         {/* Badge */}
         <div style={{
-          background: 'rgba(34,197,94,0.1)',
-          border: '1px solid rgba(34,197,94,0.25)',
+          background: '#f0fdf4',
+          border: '1px solid #bbf7d0',
           borderRadius: '20px',
           padding: '6px 16px',
-          color: '#4ade80',
+          color: '#15803d',
           fontSize: '13px',
           fontWeight: 600,
           letterSpacing: '0.5px',
@@ -84,16 +86,15 @@ function LandingPage({ onStart }: { onStart: () => void }) {
           POWERED BY YO PROTOCOL · 4.92% APY
         </div>
 
-        {/* Main headline */}
+        {/* Headline */}
         <div>
           <h1 style={{
-            color: 'white',
+            color: '#111827',
             fontSize: 'clamp(28px, 4vw, 52px)',
             fontWeight: 800,
             lineHeight: 1.15,
             letterSpacing: '-1.5px',
-            margin: 0,
-            marginBottom: '6px',
+            margin: '0 0 6px 0',
           }}>
             Inflation doesn't ask permission.
           </h1>
@@ -103,7 +104,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
             lineHeight: 1.15,
             letterSpacing: '-1.5px',
             margin: 0,
-            background: 'linear-gradient(90deg, #22c55e, #4ade80)',
+            background: 'linear-gradient(90deg, #16a34a, #22c55e)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}>
@@ -112,7 +113,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
         </div>
 
         <p style={{
-          color: '#9ca3af',
+          color: '#6b7280',
           fontSize: '17px',
           maxWidth: '500px',
           lineHeight: 1.65,
@@ -130,18 +131,19 @@ function LandingPage({ onStart }: { onStart: () => void }) {
           justifyContent: 'center',
         }}>
           {[
-            { label: 'APY', value: '4.92%', color: '#4ade80' },
-            { label: 'Total Protected', value: '$39M+', color: 'white' },
-            { label: 'Currencies', value: '12', color: 'white' },
-            { label: 'Chain', value: 'Base', color: '#60a5fa' },
+            { label: 'APY', value: '4.92%', color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
+            { label: 'Total Protected', value: '$39M+', color: '#111827', bg: 'white', border: '#e5e7eb' },
+            { label: 'Currencies', value: '12', color: '#111827', bg: 'white', border: '#e5e7eb' },
+            { label: 'Chain', value: 'Base', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
           ].map(stat => (
             <div key={stat.label} style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: stat.bg,
+              border: `1px solid ${stat.border}`,
               borderRadius: '14px',
               padding: '14px 24px',
               textAlign: 'center',
               minWidth: '100px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
             }}>
               <div style={{ color: stat.color, fontSize: '22px', fontWeight: 800 }}>{stat.value}</div>
               <div style={{ color: '#9ca3af', fontSize: '12px', marginTop: '3px', fontWeight: 500 }}>{stat.label}</div>
@@ -159,6 +161,36 @@ function LandingPage({ onStart }: { onStart: () => void }) {
         }}>
           {['🇳🇬', '🇹🇷', '🇦🇷', '🇵🇰', '🇪🇬', '🇬🇭', '🇪🇹', '🇺🇦', '🇷🇴', '🇮🇩', '🇬🇪', '🇦🇴'].map(flag => (
             <span key={flag} style={{ fontSize: '26px' }}>{flag}</span>
+          ))}
+        </div>
+
+        {/* Why section */}
+        <div style={{
+          display: 'flex',
+          gap: '16px',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          maxWidth: '600px',
+        }}>
+          {[
+            { icon: '📉', title: 'Beat inflation', desc: 'Earn 4.92% APY while your local currency loses value' },
+            { icon: '🔒', title: 'Your keys', desc: 'Non-custodial. Your wallet, your money, always' },
+            { icon: '⚡', title: 'Instant access', desc: 'Deposit or withdraw anytime with no lock-in required' },
+          ].map(item => (
+            <div key={item.title} style={{
+              backgroundColor: 'white',
+              border: '1px solid #e5e7eb',
+              borderRadius: '14px',
+              padding: '16px 20px',
+              textAlign: 'left',
+              flex: '1',
+              minWidth: '160px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+            }}>
+              <div style={{ fontSize: '24px', marginBottom: '6px' }}>{item.icon}</div>
+              <div style={{ color: '#111827', fontWeight: 700, fontSize: '14px', marginBottom: '4px' }}>{item.title}</div>
+              <div style={{ color: '#9ca3af', fontSize: '12px', lineHeight: 1.5 }}>{item.desc}</div>
+            </div>
           ))}
         </div>
 
@@ -180,8 +212,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
                       borderRadius: '14px',
                       border: 'none',
                       cursor: 'pointer',
-                      letterSpacing: '-0.2px',
-                      boxShadow: '0 0 40px rgba(34,197,94,0.25)',
+                      boxShadow: '0 4px 20px rgba(34,197,94,0.35)',
                     }}
                   >
                     Connect Wallet to Start Saving →
@@ -200,8 +231,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
                     borderRadius: '14px',
                     border: 'none',
                     cursor: 'pointer',
-                    letterSpacing: '-0.2px',
-                    boxShadow: '0 0 40px rgba(34,197,94,0.25)',
+                    boxShadow: '0 4px 20px rgba(34,197,94,0.35)',
                   }}
                 >
                   Start Saving Now →
@@ -209,7 +239,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
               )
             }}
           </ConnectButton.Custom>
-          <p style={{ color: '#6b7280', fontSize: '13px', margin: 0 }}>No sign-up. No KYC. Just connect and save.</p>
+          <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0 }}>No sign-up. No KYC. Just connect and save.</p>
         </div>
       </div>
     </div>
@@ -262,7 +292,6 @@ function Dashboard() {
           <span style={{ color: '#111827', fontWeight: 700, fontSize: '16px' }}>HoldFirm</span>
         </div>
 
-        {/* Stats bar */}
         <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
           {[
             { label: 'APY', value: loading ? '...' : `${apy}%`, color: '#16a34a' },
@@ -291,7 +320,7 @@ function Dashboard() {
             padding: '20px',
             boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
           }}>
-            <p style={{ color: '#6b7280', fontSize: '12px', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '12px', margin: '0 0 12px 0' }}>YOUR LOCAL CURRENCY</p>
+            <p style={{ color: '#9ca3af', fontSize: '12px', fontWeight: 600, letterSpacing: '0.5px', margin: '0 0 12px 0' }}>YOUR LOCAL CURRENCY</p>
             <CurrencySelector selected={selectedCurrency} onChange={setSelectedCurrency} />
           </div>
 
