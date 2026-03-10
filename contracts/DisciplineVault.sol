@@ -20,14 +20,20 @@ contract DisciplineVault {
     IERC20 public immutable usdc;
     IYoVault public immutable yoVault;
 
-    uint256 public constant LOCK_PERIOD = 30 days;
-    uint256 public constant PENALTY_PERCENT = 5;
+    uint256 public constant PENALTY_NUMERATOR = 45;
+    uint256 public constant PENALTY_DENOMINATOR = 1000;
     uint256 public constant PRECISION = 1e18;
+
+    uint256 public constant LOCK_30 = 30 days;
+    uint256 public constant LOCK_60 = 60 days;
+    uint256 public constant LOCK_90 = 90 days;
 
     struct UserInfo {
         uint256 shares;
         uint256 depositTime;
+        uint256 lockPeriod;
         uint256 rewardDebt;
+        uint256 earnedFromPenalties;
     }
 
     mapping(address => UserInfo) public users;
@@ -36,82 +42,88 @@ contract DisciplineVault {
 
     uint256 public totalShares;
     uint256 public accRewardPerShare;
-    uint256 public pendingRewards;
+    uint256 public totalPenaltyCollected;
 
-    event Deposited(address indexed user, uint256 usdcAmount, uint256 shares);
-    event Withdrawn(address indexed user, uint256 usdcAmount, bool early);
-    event PenaltyDistributed(uint256 amount);
+    event Deposited(address indexed user, uint256 usdcAmount, uint256 shares, uint256 lockDays);
+    event Withdrawn(address indexed user, uint256 usdcAmount, bool early, uint256 penaltyShares);
+    event PenaltyDistributed(uint256 penaltyShares, uint256 remainingStakers);
+    event RewardsClaimed(address indexed user, uint256 shares);
 
     constructor(address _usdc, address _yoVault) {
         usdc = IERC20(_usdc);
         yoVault = IYoVault(_yoVault);
     }
 
-    function deposit(uint256 usdcAmount) external {
+    function deposit(uint256 usdcAmount, uint256 lockDays) external {
         require(usdcAmount > 0, "Amount must be > 0");
+        require(lockDays == 30 || lockDays == 60 || lockDays == 90, "Lock must be 30, 60, or 90 days");
 
-        // Transfer USDC from user
         usdc.transferFrom(msg.sender, address(this), usdcAmount);
-
-        // Approve YO vault and deposit
         usdc.approve(address(yoVault), usdcAmount);
         uint256 sharesReceived = yoVault.deposit(usdcAmount, address(this));
 
-        // Settle pending rewards before updating
         _settleRewards(msg.sender);
 
-        // Update user info
+        uint256 lockPeriod = lockDays * 1 days;
+
         users[msg.sender].shares += sharesReceived;
         users[msg.sender].depositTime = block.timestamp;
+        users[msg.sender].lockPeriod = lockPeriod;
         users[msg.sender].rewardDebt = (users[msg.sender].shares * accRewardPerShare) / PRECISION;
 
         totalShares += sharesReceived;
 
-        // Track depositor
         if (!isDepositor[msg.sender]) {
             depositors.push(msg.sender);
             isDepositor[msg.sender] = true;
         }
 
-        emit Deposited(msg.sender, usdcAmount, sharesReceived);
+        emit Deposited(msg.sender, usdcAmount, sharesReceived, lockDays);
     }
 
     function withdraw(uint256 shareAmount) external {
         UserInfo storage user = users[msg.sender];
         require(user.shares >= shareAmount, "Insufficient shares");
 
-        // Settle pending rewards first
         _settleRewards(msg.sender);
 
-        bool isEarly = block.timestamp < user.depositTime + LOCK_PERIOD;
+        bool isEarly = block.timestamp < user.depositTime + user.lockPeriod;
         uint256 sharesToRedeem = shareAmount;
         uint256 penaltyShares = 0;
 
         if (isEarly) {
-            penaltyShares = (shareAmount * PENALTY_PERCENT) / 100;
+            penaltyShares = (shareAmount * PENALTY_NUMERATOR) / PENALTY_DENOMINATOR;
             sharesToRedeem = shareAmount - penaltyShares;
 
-            // Distribute penalty to remaining stakers
             if (totalShares > shareAmount && penaltyShares > 0) {
                 accRewardPerShare += (penaltyShares * PRECISION) / (totalShares - shareAmount);
-                emit PenaltyDistributed(penaltyShares);
+                totalPenaltyCollected += penaltyShares;
+                emit PenaltyDistributed(penaltyShares, totalShares - shareAmount);
             }
         }
 
-        // Update state
         user.shares -= shareAmount;
         totalShares -= shareAmount;
         user.rewardDebt = (user.shares * accRewardPerShare) / PRECISION;
 
-        // Redeem from YO vault
         yoVault.redeem(sharesToRedeem, msg.sender, address(this));
 
-        emit Withdrawn(msg.sender, sharesToRedeem, isEarly);
+        emit Withdrawn(msg.sender, sharesToRedeem, isEarly, penaltyShares);
     }
 
     function claimRewards() external {
-        _settleRewards(msg.sender);
-        users[msg.sender].rewardDebt = (users[msg.sender].shares * accRewardPerShare) / PRECISION;
+        UserInfo storage user = users[msg.sender];
+        require(user.shares > 0, "No shares");
+
+        uint256 pending = (user.shares * accRewardPerShare) / PRECISION - user.rewardDebt;
+        require(pending > 0, "No rewards");
+
+        user.earnedFromPenalties += pending;
+        user.rewardDebt = (user.shares * accRewardPerShare) / PRECISION;
+
+        yoVault.redeem(pending, msg.sender, address(this));
+
+        emit RewardsClaimed(msg.sender, pending);
     }
 
     function _settleRewards(address userAddr) internal {
@@ -119,14 +131,9 @@ contract DisciplineVault {
         if (user.shares > 0) {
             uint256 pending = (user.shares * accRewardPerShare) / PRECISION - user.rewardDebt;
             if (pending > 0) {
-                // Redeem pending reward shares from YO vault to user
-                yoVault.redeem(pending, userAddr, address(this));
+                user.earnedFromPenalties += pending;
             }
         }
-    }
-
-    function getUserShares(address userAddr) external view returns (uint256) {
-        return users[userAddr].shares;
     }
 
     function getPendingReward(address userAddr) external view returns (uint256) {
@@ -135,17 +142,36 @@ contract DisciplineVault {
         return (user.shares * accRewardPerShare) / PRECISION - user.rewardDebt;
     }
 
+    function getUserShares(address userAddr) external view returns (uint256) {
+        return users[userAddr].shares;
+    }
+
+    function getUserLockPeriod(address userAddr) external view returns (uint256) {
+        return users[userAddr].lockPeriod / 1 days;
+    }
+
+    function getTotalEarnedFromPenalties(address userAddr) external view returns (uint256) {
+        return users[userAddr].earnedFromPenalties;
+    }
+
     function isLocked(address userAddr) external view returns (bool) {
-        return block.timestamp < users[userAddr].depositTime + LOCK_PERIOD;
+        UserInfo storage user = users[userAddr];
+        if (user.shares == 0) return false;
+        return block.timestamp < user.depositTime + user.lockPeriod;
     }
 
     function getTimeRemaining(address userAddr) external view returns (uint256) {
-        uint256 unlockTime = users[userAddr].depositTime + LOCK_PERIOD;
+        UserInfo storage user = users[userAddr];
+        uint256 unlockTime = user.depositTime + user.lockPeriod;
         if (block.timestamp >= unlockTime) return 0;
         return unlockTime - block.timestamp;
     }
 
     function getDepositorCount() external view returns (uint256) {
         return depositors.length;
+    }
+
+    function getPenaltyPercent() external pure returns (string memory) {
+        return "4.5%";
     }
 }
