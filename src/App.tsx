@@ -9,14 +9,13 @@ import { RedeemModal } from './components/RedeemModal'
 import { InflationCounter } from './components/InflationCounter'
 import { CurrencySelector } from './components/CurrencySelector'
 import { GoalStack } from './components/GoalStack'
-import { LockBox } from './components/LockBox'
 import SavingsStreak from './components/SavingsStreak'
 import RecurringReminder from './components/RecurringReminder'
 import { UserStats } from './components/UserStats'
 import { DisciplineVaultPanel } from './components/DisciplineVaultPanel'
 import { OnboardingWizard } from './components/OnboardingWizard'
 
-const TABS = ['NestSave', 'GoalStack', 'LockBox', 'DisciplineVault', 'Streak & Habits'] as const
+const TABS = ['NestSave', 'GoalStack', 'DisciplineVault', 'Streak & Habits'] as const
 type Tab = typeof TABS[number]
 
 function LandingPage({ onStart }: { onStart: () => void }) {
@@ -341,7 +340,6 @@ function Dashboard() {
             >
               {tab === 'NestSave' ? '💰 NestSave' :
                tab === 'GoalStack' ? '🎯 GoalStack' :
-               tab === 'LockBox' ? '🔒 LockBox' :
                tab === 'DisciplineVault' ? '🏦 DisciplineVault' :
                '🔥 Streak & Habits'}
             </button>
@@ -381,10 +379,6 @@ function Dashboard() {
 
           {activeTab === 'GoalStack' && (
             <GoalStack currentBalance={usdcBalanceNumber} apy={apy} />
-          )}
-
-          {activeTab === 'LockBox' && (
-            <LockBox currentBalance={usdcBalanceNumber} />
           )}
 
           {activeTab === 'DisciplineVault' && (
