@@ -15,6 +15,68 @@ const ERC20_ABI = [
   },
 ] as const
 
+function ProjectedEarnings({ amount, lockDays, apy }: { amount: string; lockDays: number; apy: number }) {
+  const deposit = parseFloat(amount) || 0
+  if (deposit <= 0) return null
+
+  const years = lockDays / 365
+  const baseYield = deposit * (apy / 100) * years
+  const penaltyLow = deposit * 0.01 * years
+  const penaltyMed = deposit * 0.04 * years
+  const penaltyHigh = deposit * 0.08 * years
+
+  const apyLow = (apy + 1).toFixed(1)
+  const apyMed = (apy + 4).toFixed(1)
+  const apyHigh = (apy + 8).toFixed(1)
+
+  return (
+    <div style={{
+      backgroundColor: '#f0fdf4',
+      border: '1px solid #bbf7d0',
+      borderRadius: '12px',
+      padding: '16px',
+      marginBottom: '16px',
+    }}>
+      <p style={{ color: '#15803d', fontSize: '12px', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '0.5px' }}>
+        📊 PROJECTED EARNINGS FOR {lockDays} DAYS
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: '#374151', fontSize: '13px' }}>💵 Deposit</span>
+          <span style={{ color: '#111827', fontWeight: 700, fontSize: '13px' }}>${deposit.toFixed(2)} USDC</span>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: '#374151', fontSize: '13px' }}>📈 Base YO yield ({apy}% APY)</span>
+          <span style={{ color: '#15803d', fontWeight: 700, fontSize: '13px' }}>+${baseYield.toFixed(4)}</span>
+        </div>
+
+        <div style={{ borderTop: '1px dashed #bbf7d0', paddingTop: '8px', marginTop: '2px' }}>
+          <p style={{ color: '#6b7280', fontSize: '11px', fontWeight: 600, margin: '0 0 6px 0' }}>PENALTY REWARDS (from early withdrawers)</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {[
+              { label: '🟡 Low activity', value: penaltyLow, apy: apyLow },
+              { label: '🟠 Medium activity', value: penaltyMed, apy: apyMed },
+              { label: '🔴 High activity', value: penaltyHigh, apy: apyHigh },
+            ].map(row => (
+              <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#6b7280', fontSize: '12px' }}>{row.label}</span>
+                <span style={{ color: '#15803d', fontSize: '12px', fontWeight: 600 }}>+${row.value.toFixed(4)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ borderTop: '1px solid #bbf7d0', paddingTop: '8px', marginTop: '2px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: '#15803d', fontSize: '13px', fontWeight: 700 }}>🎯 Estimated APY range</span>
+          <span style={{ color: '#15803d', fontSize: '15px', fontWeight: 800 }}>{apyLow}% → {apyHigh}%</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function DisciplineVaultPanel() {
   const { address } = useAccount()
   const [amount, setAmount] = useState('')
@@ -219,7 +281,7 @@ export function DisciplineVaultPanel() {
         </div>
       </div>
 
-      {/* Lock period info if user has shares */}
+      {/* Lock period info */}
       {hasShares && userLockPeriod && (
         <div style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '12px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: '#1d4ed8', fontSize: '13px', fontWeight: 600 }}>
@@ -233,7 +295,7 @@ export function DisciplineVaultPanel() {
         </div>
       )}
 
-      {/* Claim rewards button */}
+      {/* Claim rewards */}
       {hasPendingReward && step === 'idle' && (
         <button
           onClick={handleClaim}
@@ -266,7 +328,7 @@ export function DisciplineVaultPanel() {
           </div>
 
           <p style={{ color: '#6b7280', fontSize: '12px', fontWeight: 600, margin: '0 0 8px 0' }}>DEPOSIT USDC (BASE MAINNET)</p>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
             <input
               type="number"
               value={amount}
@@ -282,10 +344,13 @@ export function DisciplineVaultPanel() {
             </button>
           </div>
 
+          {/* Projected Earnings */}
+          <ProjectedEarnings amount={amount} lockDays={lockDays} apy={4.92} />
+
           {hasShares && (
             <button
               onClick={handleWithdraw}
-              style={{ marginTop: '10px', width: '100%', backgroundColor: isLocked ? '#fef2f2' : '#f0fdf4', border: `1px solid ${isLocked ? '#fecaca' : '#bbf7d0'}`, color: isLocked ? '#dc2626' : '#15803d', fontWeight: 700, fontSize: '14px', padding: '12px', borderRadius: '10px', cursor: 'pointer' }}
+              style={{ marginTop: '4px', width: '100%', backgroundColor: isLocked ? '#fef2f2' : '#f0fdf4', border: `1px solid ${isLocked ? '#fecaca' : '#bbf7d0'}`, color: isLocked ? '#dc2626' : '#15803d', fontWeight: 700, fontSize: '14px', padding: '12px', borderRadius: '10px', cursor: 'pointer' }}
             >
               {isLocked ? `⚠️ Withdraw Early (4.5% penalty → community)` : `✅ Withdraw (no penalty)`}
             </button>
@@ -413,7 +478,6 @@ export function DisciplineVaultPanel() {
           </p>
         </div>
       </div>
-
     </div>
   )
 }
