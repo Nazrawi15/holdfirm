@@ -16,9 +16,10 @@ import { DisciplineVaultPanel } from './components/DisciplineVaultPanel'
 import { OnboardingWizard } from './components/OnboardingWizard'
 import { VaultSelector } from './components/VaultSelector'
 import { APYChart } from './components/APYChart'
+import { Leaderboard } from './components/Leaderboard'
 import type { VaultKey } from './lib/yo'
 
-const TABS = ['NestSave', 'GoalStack', 'DisciplineVault', 'Streak & Habits'] as const
+const TABS = ['NestSave', 'GoalStack', 'DisciplineVault', 'Leaderboard', 'Streak & Habits'] as const
 type Tab = typeof TABS[number]
 
 export const theme = {
@@ -415,7 +416,11 @@ function Dashboard() {
         <div style={{ display: 'flex', gap: '4px', marginBottom: '14px', backgroundColor: '#e5e7eb', borderRadius: '10px', padding: '3px', border: '1px solid #d1d5db' }}>
           {TABS.map(tab => (
             <button key={tab} className={`tab-item ${activeTab === tab ? 'active' : ''}`} onClick={() => handleTabChange(tab)}>
-              {tab === 'NestSave' ? '💰 NestSave' : tab === 'GoalStack' ? '🎯 GoalStack' : tab === 'DisciplineVault' ? '🏦 DisciplineVault' : '🔥 Streak & Habits'}
+              {tab === 'NestSave' ? '💰 NestSave'
+                : tab === 'GoalStack' ? '🎯 GoalStack'
+                : tab === 'DisciplineVault' ? '🏦 DisciplineVault'
+                : tab === 'Leaderboard' ? '🏆 Leaderboard'
+                : '🔥 Streak & Habits'}
             </button>
           ))}
         </div>
@@ -474,6 +479,9 @@ function Dashboard() {
 
           {/* ══ DisciplineVault ═══════════════════════════════════════════ */}
           {activeTab === 'DisciplineVault' && <DisciplineVaultPanel />}
+
+          {/* ══ Leaderboard ═══════════════════════════════════════════════ */}
+          {activeTab === 'Leaderboard' && <Leaderboard />}
 
           {/* ══ Streak & Habits ═══════════════════════════════════════════ */}
           {activeTab === 'Streak & Habits' && (
