@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
 
+const sLabel = {
+  fontSize: '11px',
+  fontWeight: 600,
+  letterSpacing: '0.6px',
+  textTransform: 'uppercase' as const,
+  color: '#9ca3af',
+  marginBottom: '6px',
+}
+
 export default function SavingsStreak() {
   const [streak, setStreak] = useState(0)
   const [lastSaved, setLastSaved] = useState<string | null>(null)
@@ -16,24 +25,35 @@ export default function SavingsStreak() {
   const isActive = lastSaved === today || lastSaved === yesterday
 
   return (
-    <div style={{
-      backgroundColor: '#f9fafb',
-      border: '1px solid #f3f4f6',
-      borderRadius: '16px',
-      padding: '24px',
-      textAlign: 'center',
-    }}>
-      <div style={{ fontSize: '36px', marginBottom: '8px' }}>🔥</div>
-      <div style={{ color: '#111827', fontSize: '48px', fontWeight: 800, lineHeight: 1, marginBottom: '4px' }}>{streak}</div>
-      <div style={{ color: '#9ca3af', fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>Day Saving Streak</div>
+    <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
+      <p style={sLabel}>Saving streak</p>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ fontSize: '28px', lineHeight: 1 }}>🔥</div>
+        <div>
+          <div style={{ fontSize: '36px', fontWeight: 600, color: '#111827', lineHeight: 1, fontFamily: 'DM Mono, monospace' }}>{streak}</div>
+          <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '2px' }}>days in a row</div>
+        </div>
+      </div>
+
+      <div style={{ height: '1px', background: '#f3f4f6', marginBottom: '14px' }} />
+
       {streak === 0 && (
-        <p style={{ color: '#9ca3af', fontSize: '12px', margin: 0 }}>Make your first deposit to start your streak</p>
+        <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>
+          Make your first deposit to start your streak.
+        </p>
       )}
       {streak > 0 && isActive && (
-        <p style={{ color: '#15803d', fontSize: '12px', fontWeight: 600, margin: 0 }}>🟢 Streak alive — keep it going!</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#15803d', flexShrink: 0 }} />
+          <p style={{ fontSize: '13px', color: '#15803d', fontWeight: 500, margin: 0 }}>Streak alive — keep it going!</p>
+        </div>
       )}
       {streak > 0 && !isActive && (
-        <p style={{ color: '#92400e', fontSize: '12px', fontWeight: 600, margin: 0 }}>⚠️ Save today to keep your streak!</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#d97706', flexShrink: 0 }} />
+          <p style={{ fontSize: '13px', color: '#92400e', fontWeight: 500, margin: 0 }}>Save today to keep your streak!</p>
+        </div>
       )}
     </div>
   )
