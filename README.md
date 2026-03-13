@@ -1,6 +1,6 @@
 # 🔒 HoldFirm — Save in Dollars. Earn from the Impatient.
 
-> *"In Argentina, Turkey, Nigeria — inflation doesn't ask permission. HoldFirm does."*
+> *"A behavioral finance protocol where impatient users subsidize patient savers."*
 
 **Live App:** https://holdfirm.vercel.app  
 **Contract:** https://basescan.org/address/0x85E535Af5663426D38461B2e74d34FafA8a7472a  
@@ -33,8 +33,10 @@ HoldFirm is a DeFi savings app for high-inflation economies, built on Base and p
 
 It does two things no other savings app does together:
 
-1. **Save in USDC** — dollar-denominated, inflation-proof, earning real yield via YO Protocol
+1. **Save in USDC or EURC** — dollar or euro denominated, inflation-proof, earning real yield via YO Protocol
 2. **Earn from impatient users** — our onchain DisciplineVault redistributes early withdrawal penalties to committed savers
+
+**DisciplineVault is a behavioral finance primitive where impatient users subsidize patient savers while all funds earn YO yield.**
 
 When you lock for 30, 60, or 90 days, you don't just earn APY. You earn a share of every penalty paid by people who broke their commitment. **Patience is financially rewarded.**
 
@@ -48,19 +50,22 @@ User deposits USDC
        ↓
 DisciplineVault (our smart contract)
        ↓
-YO Protocol yoUSD Vault (earning 4.92% APY)
+YO Protocol yoUSD Vault (earning ~4.92% APY)
        ↓
-yoUSD shares held by contract
+yoUSD shares held by contract — earning yield every block
        ↓
 Early withdrawal? → 4.5% penalty → distributed to locked savers
-On-time withdrawal? → full amount + yield + penalty rewards
+On-time withdrawal? → full principal + YO yield + penalty rewards
 ```
+
+Every locked dollar earns **two streams simultaneously**: YO Protocol APY + a share of penalties from everyone who gave up early.
 
 ### The Behavioral Economics
 - Lock for 30/60/90 days → commit publicly onchain
-- Early withdrawal = 4.5% penalty → redistributed to everyone who stayed
+- Early withdrawal = 4.5% penalty → redistributed proportionally to everyone who stayed
 - The longer you lock, the more you benefit from others' impatience
-- This creates a **self-reinforcing commitment mechanism** — every early withdrawal makes staying more valuable
+- Every early withdrawal makes the vault **more valuable** for those who stayed
+- This creates a self-reinforcing commitment mechanism with no admin, no cron job, no manual step
 
 ---
 
@@ -76,40 +81,50 @@ On-time withdrawal? → full amount + yield + penalty rewards
 The AI generates a warm, personal, actionable recommendation — telling you exactly which HoldFirm mode fits your situation and why.
 
 ### 💰 NestSave
-Simple USDC savings earning 4.92% APY via YO Protocol. View your balance in your local currency in real time. Watch inflation lose its grip.
-
-### 🎯 GoalStack
-Goal-based savings with target amount, deadline, progress bar, and yield projection. Save for a house, education, or emergency fund — with a countdown that keeps you accountable.
+Flexible USDC or EURC savings earning live APY via YO Protocol. Switch between Dollar Savings (yoUSD) and Euro Savings (yoEUR) with a live vault selector. View your balance in your local currency in real time. 30-day APY history chart updates automatically as you switch vaults.
 
 ### 🏦 DisciplineVault ⭐ Core Innovation
 Our custom smart contract deployed on Base mainnet. The only savings vault that pays you for other people's impatience.
 
 - Lock USDC for 30, 60, or 90 days
-- Funds forwarded to YO Protocol vault, earning yield
-- Early withdrawal: 4.5% penalty redistributed to all committed savers automatically
+- Funds forwarded internally to YO Protocol yoUSD vault, earning yield
+- Early withdrawal: 4.5% penalty automatically redistributed to all committed savers
 - On-time withdrawal: full principal + YO yield + share of all penalties collected
 - Penalty pool visible in real time
 - Claim rewards anytime with one click
 
-### 🔥 Streak & Habits
-Savings streak counter, recurring reminder system, and YO SDK transaction history display.
+### 🏆 Leaderboard
+On-chain rankings read directly from DisciplineVault on Base. Two views:
+- **Most Patient Savers** — ranked by lock period and shares
+- **Top Penalty Earners** — ranked by total penalties accumulated
+
+Every address links to Basescan. Updates every block. No backend.
 
 ---
 
 ## YO Protocol SDK Integration
 
-HoldFirm uses 5 YO Protocol SDK methods:
+HoldFirm uses **11 YO Protocol SDK methods** — the deepest integration in this hackathon.
 
-| Method | Where Used | Purpose |
-|--------|-----------|---------|
-| `YieldProvider` | `main.tsx` | Wraps entire app, provides context |
-| `getVaultSnapshot()` | `useYoVault.ts` | Live APY + TVL displayed in navbar |
-| `getUserPerformance()` | `useUserData.ts` | Yield earned by user |
-| `getUserTransactionHistory()` | `useUserData.ts` | Recent saves in Streak & Habits tab |
-| `getUserBalances()` | `useUserData.ts` | Wallet assets display |
+| Method | Source | Where Used | Purpose |
+|--------|--------|-----------|---------|
+| `YieldProvider` | `@yo-protocol/react` | `main.tsx` | Wraps entire app, provides context |
+| `useVaults` | `@yo-protocol/react` | `useYoVault.ts` | Live APY + TVL for both vaults |
+| `useVaultState` | `@yo-protocol/react` | `useYoVault.ts` | User balance and shares |
+| `useVaultHistory` | `@yo-protocol/react` | `useVaultHistory.ts` | 30-day APY history for chart |
+| `usePreviewDeposit` | `@yo-protocol/react` | `DepositModal.tsx` | Preview shares before depositing |
+| `usePreviewRedeem` | `@yo-protocol/react` | `RedeemModal.tsx` | Preview exact USDC before withdrawing |
+| `useDeposit` | `@yo-protocol/react` | `DepositModal.tsx` | Execute deposit transaction |
+| `useRedeem` | `@yo-protocol/react` | `RedeemModal.tsx` | Execute withdraw transaction |
+| `useApprove` | `@yo-protocol/react` | `DepositModal.tsx` | Approve USDC/EURC spending |
+| `createApiClient` | `@yo-protocol/core` | `lib/yo.ts` | Initialize API connection |
+| `API_BASE_URL` | `@yo-protocol/core` | `lib/yo.ts` | Base URL constant |
 
-**Vault:** `0x0000000f2eb9f69274678c76222b35eec7588a65` (yoUSD on Base)  
-**Network:** Base Mainnet (chainId: 8453)
+**Vaults:**
+- yoUSD: `0x0000000f2eb9f69274678c76222b35eec7588a65` (Dollar Savings)
+- yoEUR: `0x50c749ae210d3977adc824ae11f3c7fd10c871e9` (Euro Savings)
+
+Both vaults are live with real deposits flowing through YO Protocol on Base Mainnet.
 
 ---
 
@@ -131,50 +146,39 @@ function withdraw(uint256 shareAmount) external
 function claimRewards() external
 
 // View functions
-function getUserShares(address user) external view returns (uint256)
 function getPendingReward(address user) external view returns (uint256)
-function getTotalEarnedFromPenalties(address user) external view returns (uint256)
 function isLocked(address user) external view returns (bool)
-function getTimeRemaining(address user) external view returns (uint256)
 function getDepositorCount() external view returns (uint256)
+function totalPenaltyCollected() external view returns (uint256)
+function totalShares() external view returns (uint256)
 ```
 
 ### Penalty Distribution: How `accRewardPerShare` Works
 
-The contract uses a **reward-per-share accumulator** pattern — the same battle-tested algorithm used by Synthetix and SushiSwap.
-
-Here is the exact flow when someone withdraws early:
+The contract uses a **reward-per-share accumulator** — the same battle-tested algorithm used by Synthetix and SushiSwap.
 
 **Step 1 — Early withdrawer triggers `withdraw()`:**
 ```solidity
-uint256 penalty = (shareAmount * PENALTY_BPS) / 10000; // 4.5% of their shares
-totalPenaltyCollected += penalty;
-accRewardPerShare += (penalty * PRECISION) / totalShares;
+uint256 penalty = (shareAmount * 45) / 1000; // 4.5% of their shares
+accRewardPerShare += (penalty * 1e18) / (totalShares - shareAmount);
 ```
 
-The penalty stays inside the vault. `accRewardPerShare` is a running tally — it increases every time a penalty arrives, proportional to how many total shares exist.
-
-**Step 2 — Patient saver checks their reward via `getPendingReward()`:**
+**Step 2 — Patient saver checks reward via `getPendingReward()`:**
 ```solidity
-pending = (userShares * accRewardPerShare / PRECISION) - rewardDebt[user];
+pending = (userShares * accRewardPerShare / 1e18) - rewardDebt[user];
 ```
-
-Each saver's pending reward = their shares × the accumulated reward per share, minus what they've already claimed.
 
 **Step 3 — Patient saver calls `claimRewards()`:**
 ```solidity
-uint256 pending = getPendingReward(msg.sender);
-rewardDebt[msg.sender] = (userShares * accRewardPerShare) / PRECISION;
-// transfer pending yoUSD shares to user
+rewardDebt[msg.sender] = (userShares * accRewardPerShare) / 1e18;
+// yoUSD shares transferred to user
 ```
 
-Their `rewardDebt` is updated so they can't claim the same reward twice.
-
 **Why this design is powerful:**
-- O(1) gas — distribution costs the same whether there are 5 or 5,000 savers
+- O(1) gas — distribution costs the same for 5 or 5,000 savers
 - Fully automatic — no admin, no cron job, no manual step
 - Triggered instantly inside the same transaction as the early withdrawal
-- Every early withdrawal makes the vault more valuable for those who stayed
+- Every early withdrawal makes the vault more valuable for everyone who stayed
 
 ---
 
@@ -201,14 +205,15 @@ The full deposit → withdrawal → penalty redistribution cycle has been **prov
 
 **Where do funds go?**
 ```
-Your Wallet → DisciplineVault → YO Protocol Vault → yoUSD Yield
+Your Wallet → DisciplineVault → YO Protocol yoUSD Vault → yoUSD Yield
 ```
 
 **Security model:**
 - Non-custodial — funds held by smart contract, not by HoldFirm
-- No admin keys — contract is fully immutable, no owner functions
-- No upgradeability — what you see is what runs forever
+- No admin keys — contract has no owner functions
+- No upgradeability — immutable, what you see is what runs forever
 - Penalty enforcement is pure Solidity — cannot be bypassed or modified
+- Leaderboard reads directly from contract — no backend, no database
 
 **Risk Disclosure:**
 DisciplineVault is unaudited — only deposit what you can afford to lose. YO Protocol vault risk applies. Early withdrawal incurs a 4.5% penalty redistributed to committed savers.
@@ -216,7 +221,9 @@ DisciplineVault is unaudited — only deposit what you can afford to lose. YO Pr
 **Contracts:**
 - DisciplineVault: `0x85E535Af5663426D38461B2e74d34FafA8a7472a`
 - YO yoUSD Vault: `0x0000000f2eb9f69274678c76222b35eec7588a65`
+- YO yoEUR Vault: `0x50c749ae210d3977adc824ae11f3c7fd10c871e9`
 - USDC on Base: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
+- EURC on Base: `0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42`
 
 ---
 
@@ -253,17 +260,28 @@ DisciplineVault is unaudited — only deposit what you can afford to lose. YO Pr
 | 🇬🇪 Georgia | GEL | 9.5% |
 | 🇦🇴 Angola | AOA | 20% |
 
+> Don't see your country? Select any high-inflation currency — the math works the same way.
+
 ---
 
 ## Why HoldFirm Wins
 
-**UX Simplicity (30%):** Connect wallet → AI wizard → personalized strategy → one-click deposit. No KYC. No sign-up. Works in 60 seconds.
+**UX Simplicity (30%):** Connect wallet → AI wizard → personalized strategy → one-click deposit. No KYC. No sign-up. Works in 60 seconds. Fully localized — see your balance in TRY, ARS, NGN, and 9 other currencies in real time.
 
-**Creativity & Growth Potential (30%):** First DeFi savings app that pays committed savers from impatient users' penalties. Behavioral finance meets DeFi. 1.4 billion addressable users.
+**Creativity & Growth Potential (30%):** First DeFi savings app that pays committed savers from impatient users' penalties. Behavioral finance meets DeFi. 1.4 billion addressable users. Onchain leaderboard creates social competition and retention. yoUSD + yoEUR dual-vault gives access to both dollar and euro savings in one app.
 
-**Integration Quality (20%):** 5 YO SDK methods used. Real deposits flowing through YO vault onchain. Live APY/TVL from SDK displayed in navbar.
+**Integration Quality (20%):** 11 YO SDK methods used across the full deposit/withdraw/preview/history lifecycle. Real funds flowing through both yoUSD and yoEUR vaults onchain. Live APY, TVL, and 30-day APY history chart powered entirely by the YO SDK.
 
-**Risk & Trust (20%):** Full fund flow transparency. Two real TX proofs on mainnet — deposit AND early withdrawal with penalty redistribution. Contract on Basescan. Non-custodial. No admin keys.
+**Risk & Trust (20%):** Full fund flow transparency. Two real TX proofs on mainnet — deposit AND early withdrawal with penalty redistribution confirmed. Contract verified on Basescan. Non-custodial. No admin keys. No backend — leaderboard reads directly from the contract.
+
+---
+
+## Roadmap (v2)
+
+- **NFT Lock Positions** — each DisciplineVault deposit mints an NFT representing your locked position. Tradeable on secondary markets. Adds liquidity to locked capital without breaking commitment.
+- **Multi-asset vaults** — lock ETH, cbBTC alongside USDC
+- **Cross-chain** — deploy on Optimism, Arbitrum
+- **Mobile app** — React Native with biometric savings reminders
 
 ---
 
