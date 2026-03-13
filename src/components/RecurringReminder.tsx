@@ -2,6 +2,15 @@ import { useEffect, useState } from 'react'
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+const sLabel = {
+  fontSize: '11px',
+  fontWeight: 600,
+  letterSpacing: '0.6px',
+  textTransform: 'uppercase' as const,
+  color: '#9ca3af',
+  marginBottom: '6px',
+}
+
 export default function RecurringReminder() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const [saved, setSaved] = useState(false)
@@ -36,54 +45,39 @@ export default function RecurringReminder() {
   }
 
   return (
-    <div style={{
-      backgroundColor: '#f9fafb',
-      border: '1px solid #f3f4f6',
-      borderRadius: '16px',
-      padding: '24px',
-    }}>
-      <h3 style={{ color: '#111827', fontWeight: 700, fontSize: '16px', margin: '0 0 4px 0' }}>
-        ⏰ Recurring Save Reminder
-      </h3>
-      <p style={{ color: '#9ca3af', fontSize: '13px', margin: '0 0 16px 0' }}>
+    <div style={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '20px', fontFamily: 'Inter, sans-serif' }}>
+      <p style={sLabel}>Weekly reminder</p>
+      <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 16px 0' }}>
         Pick a day each week to save. Build the habit.
       </p>
 
       {showNudge && (
-        <div style={{
-          backgroundColor: '#fefce8',
-          border: '1px solid #fde68a',
-          borderRadius: '10px',
-          padding: '10px 14px',
-          marginBottom: '14px',
-          color: '#92400e',
-          fontSize: '13px',
-          fontWeight: 600,
-        }}>
-          🔔 Today is your saving day! Don't break the habit — deposit now.
+        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#d97706', flexShrink: 0 }} />
+          <p style={{ color: '#92400e', fontSize: '13px', fontWeight: 500, margin: 0 }}>
+            Today is your saving day — deposit now.
+          </p>
         </div>
       )}
 
       {!saved ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '8px',
-          }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
             {DAYS.map((day, i) => (
               <button
                 key={day}
                 onClick={() => setSelectedDay(i)}
                 style={{
                   padding: '8px 4px',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  fontWeight: 600,
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: 500,
                   cursor: 'pointer',
-                  border: selectedDay === i ? '2px solid #22c55e' : '1px solid #e5e7eb',
-                  backgroundColor: selectedDay === i ? '#f0fdf4' : 'white',
-                  color: selectedDay === i ? '#15803d' : '#6b7280',
+                  border: selectedDay === i ? '2px solid #111827' : '1px solid #e5e7eb',
+                  backgroundColor: selectedDay === i ? '#111827' : '#ffffff',
+                  color: selectedDay === i ? '#ffffff' : '#6b7280',
+                  fontFamily: 'Inter, sans-serif',
+                  transition: 'all 0.12s ease',
                 }}
               >
                 {day.slice(0, 3)}
@@ -96,35 +90,31 @@ export default function RecurringReminder() {
             style={{
               width: '100%',
               padding: '10px',
-              borderRadius: '10px',
-              background: selectedDay === null
-                ? '#e5e7eb'
-                : 'linear-gradient(135deg, #22c55e, #16a34a)',
-              color: selectedDay === null ? '#9ca3af' : 'white',
-              fontWeight: 700,
+              borderRadius: '8px',
+              background: selectedDay === null ? '#f3f4f6' : '#111827',
+              color: selectedDay === null ? '#9ca3af' : '#ffffff',
+              fontWeight: 600,
               fontSize: '14px',
               border: 'none',
               cursor: selectedDay === null ? 'not-allowed' : 'pointer',
+              fontFamily: 'Inter, sans-serif',
+              transition: 'all 0.12s ease',
             }}
           >
-            Set Reminder
+            Set reminder
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <p style={{ color: '#15803d', fontSize: '14px', fontWeight: 600, margin: 0 }}>
-            ✅ Reminder set for every <strong>{DAYS[selectedDay!]}</strong>
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#f9fafb', borderRadius: '8px', border: '1px solid #f3f4f6' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#15803d' }} />
+            <p style={{ fontSize: '13px', color: '#374151', fontWeight: 500, margin: 0 }}>
+              Every <strong>{DAYS[selectedDay!]}</strong>
+            </p>
+          </div>
           <button
             onClick={handleReset}
-            style={{
-              backgroundColor: 'transparent',
-              border: 'none',
-              color: '#9ca3af',
-              fontSize: '12px',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
+            style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '12px', cursor: 'pointer', fontWeight: 500, fontFamily: 'Inter, sans-serif' }}
           >
             Change
           </button>

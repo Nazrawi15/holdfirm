@@ -34,56 +34,70 @@ export function InflationCounter({
   }).format(lostAmount)
 
   return (
-    <div style={{ height: '100%' }}>
+    <div style={{ height: '100%', fontFamily: 'Inter, sans-serif' }}>
+
+      {/* Label row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+        {/* Pulsing red dot */}
+        <div style={{ position: 'relative', width: 8, height: 8, flexShrink: 0 }}>
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            backgroundColor: '#fca5a5', animation: 'hf-pulse 1.5s ease-in-out infinite',
+          }} />
+          <div style={{
+            position: 'absolute', inset: 1, borderRadius: '50%',
+            backgroundColor: '#dc2626',
+          }} />
+        </div>
+        <p style={{
+          fontSize: '0.6875rem', fontWeight: 700, color: '#dc2626',
+          textTransform: 'uppercase', letterSpacing: '0.07em', margin: 0,
+        }}>
+          Inflation stealing right now
+        </p>
+      </div>
+
+      {/* Ticking number */}
+      <p style={{
+        fontFamily: 'DM Mono, monospace',
+        fontSize: '1.625rem',
+        fontWeight: 700,
+        color: '#111827',
+        letterSpacing: '-0.5px',
+        margin: '0 0 4px 0',
+        lineHeight: 1.1,
+      }}>
+        − {currencyCode} {formatted}
+      </p>
+
+      {/* Subtitle */}
+      <p style={{ color: '#6b7280', fontSize: '0.75rem', margin: '0 0 14px 0', lineHeight: 1.5 }}>
+        Lost since you opened this page · {inflationRate}% annual inflation
+      </p>
+
+      {/* Protection badge */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
-        marginBottom: '10px',
-      }}>
-        <div style={{
-          width: '8px',
-          height: '8px',
-          borderRadius: '50%',
-          backgroundColor: '#dc2626',
-          flexShrink: 0,
-        }} />
-        <p style={{
-          color: '#dc2626',
-          fontSize: '12px',
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          letterSpacing: '1px',
-          margin: 0,
-        }}>
-          Inflation is stealing
-        </p>
-      </div>
-
-      <p style={{
-        color: '#111827',
-        fontSize: '28px',
-        fontWeight: 800,
-        margin: '0 0 4px 0',
-        letterSpacing: '-1px',
-      }}>
-        {currencyCode} {formatted}
-      </p>
-
-      <p style={{ color: '#6b7280', fontSize: '13px', margin: '0 0 14px 0' }}>
-        Lost since you opened this app — at {inflationRate}% annual inflation
-      </p>
-
-      <div style={{
+        gap: 8,
         backgroundColor: '#f0fdf4',
         border: '1px solid #bbf7d0',
-        borderRadius: '10px',
-        padding: '10px 12px',
+        borderRadius: 10,
+        padding: '9px 12px',
       }}>
-        <p style={{ color: '#15803d', fontSize: '13px', fontWeight: 600, margin: 0 }}>
-          🔒 HoldFirm is protecting your savings from this
+        <span style={{ fontSize: '0.875rem', flexShrink: 0 }}>🔒</span>
+        <p style={{ color: '#15803d', fontSize: '0.75rem', fontWeight: 600, margin: 0, lineHeight: 1.4 }}>
+          HoldFirm is protecting your savings from this
         </p>
       </div>
+
+      {/* Pulse keyframe */}
+      <style>{`
+        @keyframes hf-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(2.2); opacity: 0; }
+        }
+      `}</style>
     </div>
   )
 }
