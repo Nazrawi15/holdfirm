@@ -161,7 +161,6 @@ export function DisciplineVaultPanel() {
     functionName: 'totalPenaltyCollected',
   })
 
-  // ── Side effects in useEffect, not inline during render ──────────────────
   useEffect(() => {
     if (approveSuccess && step === 'approving') {
       setStep('depositing')
@@ -254,7 +253,7 @@ export function DisciplineVaultPanel() {
       <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px' }}>
         <p style={{ fontSize: '13px', color: '#92400e', fontWeight: 600, marginBottom: '4px' }}>How it works</p>
         <p style={{ fontSize: '13px', color: '#78350f', margin: 0, lineHeight: 1.6 }}>
-          Lock USDC for 30, 60, or 90 days. If anyone withdraws early, they pay a <strong>4.5% penalty</strong> — automatically distributed to everyone who stayed committed. Patience pays.
+          Lock USDC for 30, 60, or 90 days. If anyone withdraws early, they pay a <strong>4.5% penalty</strong> — automatically distributed to everyone who stayed committed. <strong>Every early withdrawal makes your position more valuable.</strong> Patience pays.
         </p>
       </div>
 
@@ -273,17 +272,18 @@ export function DisciplineVaultPanel() {
         ))}
       </div>
 
-      {/* Penalty pool */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', marginBottom: '20px' }}>
+      {/* 🎰 Discipline Jackpot */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 18px', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', border: '1px solid #fde68a', borderRadius: '10px', marginBottom: '20px' }}>
         <div>
-          <p style={s.label}>Total penalty pool collected</p>
-          <p style={{ fontSize: '20px', fontWeight: 700, color: '#111827', margin: 0, fontFamily: 'Inter, sans-serif' }}>
+          <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#b45309', marginBottom: '6px', margin: '0 0 6px 0' }}>🎰 Discipline Jackpot</p>
+          <p style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
             {totalPenaltyFormatted} <span style={{ fontSize: '13px', color: '#9ca3af', fontWeight: 400 }}>yoUSD</span>
           </p>
+          <p style={{ fontSize: '12px', color: '#78350f', margin: 0 }}>
+            Paid by weak hands. Waiting for diamond hands.
+          </p>
         </div>
-        <div style={{ fontSize: '11px', color: '#6b7280', background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '20px', padding: '4px 12px', fontWeight: 500 }}>
-          Redistributed to savers
-        </div>
+        <div style={{ fontSize: '32px' }}>💎</div>
       </div>
 
       {/* Lock period info */}
