@@ -231,8 +231,8 @@ export function DisciplineVaultPanel() {
   const totalEarnedFormatted = totalEarned ? (Number(totalEarned) / 1e6).toFixed(4) : '0'
   const totalPenaltyFormatted = totalPenaltyCollected ? (Number(totalPenaltyCollected) / 1e6).toFixed(4) : '0'
   const daysRemaining = timeRemaining ? Math.ceil(Number(timeRemaining) / 86400) : 0
-  const hasPendingReward = pendingReward && pendingReward > BigInt(0)
-  const hasShares = userShares && userShares > BigInt(0)
+  const hasPendingReward = !!(pendingReward && pendingReward > BigInt(0))
+  const hasShares = !!(userShares && userShares > BigInt(0))
 
   return (
     <div style={{ fontFamily: 'Inter, sans-serif' }}>
