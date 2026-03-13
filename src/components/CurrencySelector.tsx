@@ -76,6 +76,10 @@ export function CurrencySelector({ selected, onChange }: CurrencySelectorProps) 
           ))}
         </select>
       </div>
+
+      <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '8px', lineHeight: 1.5 }}>
+        Don't see your country? Select any high-inflation currency — the math works the same way.
+      </p>
     </div>
   )
 }
