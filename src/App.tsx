@@ -8,10 +8,6 @@ import { DepositModal } from './components/DepositModal'
 import { RedeemModal } from './components/RedeemModal'
 import { InflationCounter } from './components/InflationCounter'
 import { CurrencySelector } from './components/CurrencySelector'
-import { GoalStack } from './components/GoalStack'
-import SavingsStreak from './components/SavingsStreak'
-import RecurringReminder from './components/RecurringReminder'
-import { UserStats } from './components/UserStats'
 import { DisciplineVaultPanel } from './components/DisciplineVaultPanel'
 import { OnboardingWizard } from './components/OnboardingWizard'
 import { VaultSelector } from './components/VaultSelector'
@@ -19,7 +15,7 @@ import { APYChart } from './components/APYChart'
 import { Leaderboard } from './components/Leaderboard'
 import type { VaultKey } from './lib/yo'
 
-const TABS = ['NestSave', 'GoalStack', 'DisciplineVault', 'Leaderboard', 'Streak & Habits'] as const
+const TABS = ['NestSave', 'DisciplineVault', 'Leaderboard'] as const
 type Tab = typeof TABS[number]
 
 export const theme = {
@@ -313,7 +309,6 @@ function Dashboard() {
   const [selectedVault, setSelectedVault] = useState<VaultKey>('yoUSD')
   const { apy, tvl, loading } = useYoVault(selectedVault)
   const { formatted: usdcBalance } = useUSDCBalance()
-  const { address } = useAccount()
   const [showDeposit, setShowDeposit] = useState(false)
   const [showRedeem, setShowRedeem] = useState(false)
   const [selectedCurrency, setSelectedCurrency] = useState('TRY')
@@ -417,10 +412,8 @@ function Dashboard() {
           {TABS.map(tab => (
             <button key={tab} className={`tab-item ${activeTab === tab ? 'active' : ''}`} onClick={() => handleTabChange(tab)}>
               {tab === 'NestSave' ? '💰 NestSave'
-                : tab === 'GoalStack' ? '🎯 GoalStack'
                 : tab === 'DisciplineVault' ? '🏦 DisciplineVault'
-                : tab === 'Leaderboard' ? '🏆 Leaderboard'
-                : '🔥 Streak & Habits'}
+                : '🏆 Leaderboard'}
             </button>
           ))}
         </div>
@@ -466,37 +459,13 @@ function Dashboard() {
             </div>
           )}
 
-          {/* ══ GoalStack ═════════════════════════════════════════════════ */}
-          {activeTab === 'GoalStack' && (
-            <div>
-              <div style={{ marginBottom: '24px', paddingBottom: '18px', borderBottom: '1px solid #f3f4f6' }}>
-                <h2 className="serif" style={{ fontSize: '26px', color: '#111827', fontWeight: 400, marginBottom: '4px', letterSpacing: '-0.5px' }}>GoalStack</h2>
-                <p style={{ fontSize: '14px', color: '#6b7280' }}>Goal-based savings with target amount and yield projection.</p>
-              </div>
-              <GoalStack currentBalance={usdcBalanceNumber} apy={apy} />
-            </div>
-          )}
-
           {/* ══ DisciplineVault ═══════════════════════════════════════════ */}
           {activeTab === 'DisciplineVault' && <DisciplineVaultPanel />}
 
           {/* ══ Leaderboard ═══════════════════════════════════════════════ */}
           {activeTab === 'Leaderboard' && <Leaderboard />}
 
-          {/* ══ Streak & Habits ═══════════════════════════════════════════ */}
-          {activeTab === 'Streak & Habits' && (
-            <div>
-              <div style={{ marginBottom: '24px', paddingBottom: '18px', borderBottom: '1px solid #f3f4f6' }}>
-                <h2 className="serif" style={{ fontSize: '26px', color: '#111827', fontWeight: 400, marginBottom: '4px', letterSpacing: '-0.5px' }}>Streak & Habits</h2>
-                <p style={{ fontSize: '14px', color: '#6b7280' }}>Track your savings discipline over time.</p>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                <SavingsStreak />
-                <RecurringReminder />
-              </div>
-              <UserStats address={address} />
-            </div>
-          )}
+
         </div>
       </div>
 
