@@ -358,38 +358,69 @@ function Dashboard() {
 
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '28px 24px' }}>
 
-        {/* Balance card */}
-        <div className="card" style={{ padding: '28px 32px', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+        {/* Balance card — dark navy hero */}
+        <div style={{
+          background: 'linear-gradient(135deg, #0d1117 0%, #111827 60%, #0f1d2e 100%)',
+          borderRadius: '16px',
+          padding: '28px 32px',
+          marginBottom: '16px',
+          border: '1px solid rgba(255,255,255,0.07)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Subtle grid overlay */}
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)', backgroundSize: '32px 32px', pointerEvents: 'none', borderRadius: '16px' }} />
+          {/* Green glow top-left */}
+          <div style={{ position: 'absolute', top: '-60px', left: '-40px', width: '240px', height: '240px', background: 'radial-gradient(ellipse, rgba(74,222,128,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '10px' }}>
-                <p className="section-label" style={{ margin: 0 }}>Total Savings</p>
+              {/* Label + hide button */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '12px' }}>
+                <p style={{ margin: 0, fontSize: '11px', fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>Total Savings</p>
                 <button
                   onClick={() => setBalanceHidden(h => !h)}
                   title={balanceHidden ? 'Show balance' : 'Hide balance'}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, border: '1px solid #e5e7eb', borderRadius: 6, background: 'transparent', cursor: 'pointer', color: '#9ca3af', padding: 0, transition: 'color 0.15s, border-color 0.15s' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#374151'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#9ca3af' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = '#9ca3af'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#e5e7eb' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, background: 'transparent', cursor: 'pointer', color: 'rgba(255,255,255,0.35)', padding: 0, transition: 'color 0.15s, border-color 0.15s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.7)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.3)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.35)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.15)' }}
                 >
                   {balanceHidden ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
+
+              {/* Big balance */}
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '6px' }}>
-                <span style={{ fontSize: '42px', fontWeight: 700, color: '#111827', letterSpacing: '-2px', lineHeight: 1, fontFamily: 'Inter, sans-serif', filter: balanceHidden ? 'blur(10px)' : 'none', userSelect: balanceHidden ? 'none' : 'auto', transition: 'filter 0.25s ease' }}>
+                <span style={{ fontSize: '48px', fontWeight: 700, color: '#ffffff', letterSpacing: '-2.5px', lineHeight: 1, fontFamily: 'Inter, sans-serif', filter: balanceHidden ? 'blur(10px)' : 'none', userSelect: balanceHidden ? 'none' : 'auto', transition: 'filter 0.25s ease' }}>
                   ${usdcBalance}
                 </span>
-                <span style={{ fontSize: '15px', color: '#9ca3af' }}>{vaultLabel}</span>
+                <span style={{ fontSize: '15px', color: 'rgba(255,255,255,0.35)' }}>{vaultLabel}</span>
               </div>
-              <p style={{ fontSize: '15px', color: '#15803d', fontWeight: 600, marginBottom: '4px', fontFamily: 'Inter, sans-serif', filter: balanceHidden ? 'blur(10px)' : 'none', userSelect: balanceHidden ? 'none' : 'auto', transition: 'filter 0.25s ease' }}>
+
+              {/* Local currency */}
+              <p style={{ fontSize: '16px', color: '#4ade80', fontWeight: 600, marginBottom: '6px', fontFamily: 'Inter, sans-serif', filter: balanceHidden ? 'blur(10px)' : 'none', userSelect: balanceHidden ? 'none' : 'auto', transition: 'filter 0.25s ease' }}>
                 {selectedCurrencyData?.flag} {selectedCurrency} {localBalance}
               </p>
-              <p style={{ fontSize: '13px', color: '#6b7280' }}>
-                Earning <span style={{ color: '#15803d', fontWeight: 600 }}>{apy}% APY</span> · Protected from inflation
+              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.35)' }}>
+                Earning <span style={{ color: '#4ade80', fontWeight: 600 }}>{apy}% APY</span> · Protected from inflation
               </p>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button className="btn-primary" onClick={() => setShowDeposit(true)}>↑ Deposit</button>
-              <button className="btn-outline" onClick={() => setShowRedeem(true)}>↓ Withdraw</button>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+              <button
+                onClick={() => setShowDeposit(true)}
+                style={{ padding: '10px 22px', fontSize: '14px', fontWeight: 600, background: '#4ade80', color: '#0d1117', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'background 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#22c55e')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#4ade80')}
+              >↑ Deposit</button>
+              <button
+                onClick={() => setShowRedeem(true)}
+                style={{ padding: '10px 22px', fontSize: '14px', fontWeight: 500, background: 'rgba(255,255,255,0.08)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'background 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
+              >↓ Withdraw</button>
             </div>
           </div>
         </div>
