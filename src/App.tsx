@@ -47,24 +47,24 @@ export const globalStyles = `
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { font-size: 16px; }
   body {
-    background: #f3f4f6;
-    color: #111827;
+    background: #0d1117;
+    color: #e5e7eb;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
   }
   ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #f3f4f6; }
-  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+  ::-webkit-scrollbar-track { background: #0d1117; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
   .serif { font-family: 'Instrument Serif', Georgia, serif; }
   .num { font-family: 'Inter', sans-serif; font-weight: 700; }
   .btn-primary {
-    background: #111827; color: #fff; border: none; border-radius: 8px;
-    padding: 10px 24px; font-size: 14px; font-weight: 500;
+    background: #4ade80; color: #0d1117; border: none; border-radius: 8px;
+    padding: 10px 24px; font-size: 14px; font-weight: 600;
     font-family: 'Inter', sans-serif; cursor: pointer;
     transition: background 0.15s ease, box-shadow 0.15s ease;
   }
-  .btn-primary:hover { background: #1f2937; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .btn-primary:hover { background: #22c55e; }
   .btn-primary-light {
     background: #ffffff; color: #111827; border: none; border-radius: 8px;
     padding: 10px 24px; font-size: 14px; font-weight: 600;
@@ -81,25 +81,25 @@ export const globalStyles = `
   }
   .btn-secondary:hover { background: rgba(255,255,255,0.14); }
   .btn-outline {
-    background: #fff; color: #111827;
-    border: 1px solid #d1d5db; border-radius: 8px;
+    background: rgba(255,255,255,0.06); color: #e5e7eb;
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
     padding: 10px 24px; font-size: 14px; font-weight: 500;
     font-family: 'Inter', sans-serif; cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .btn-outline:hover { border-color: #9ca3af; background: #f9fafb; }
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
   .card {
-    background: #fff; border: 1px solid #e5e7eb;
-    border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    background: #161b22; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
   }
   .tab-item {
     padding: 7px 14px; border-radius: 6px; border: none; cursor: pointer;
     font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif;
-    transition: all 0.12s ease; background: transparent; color: #6b7280; white-space: nowrap;
+    transition: all 0.12s ease; background: transparent; color: rgba(255,255,255,0.4); white-space: nowrap;
   }
-  .tab-item:hover { background: #f3f4f6; color: #374151; }
-  .tab-item.active { background: #fff; color: #111827; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #9ca3af; }
+  .tab-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
+  .tab-item.active { background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,0.12); }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255,255,255,0.3); }
   @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
   .fade-in   { animation: fadeIn 0.4s ease forwards; }
   .fade-in-2 { animation: fadeIn 0.4s ease 0.08s forwards; opacity:0; }
@@ -108,6 +108,20 @@ export const globalStyles = `
   input { font-family: 'Inter', sans-serif; }
   input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .hf-nav-stats { display: none !important; }
+    .hf-page { padding: 14px 12px !important; }
+    .hf-currency-grid { grid-template-columns: 1fr !important; }
+    .hf-stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .hf-tabs { gap: 2px !important; }
+    .hf-tab-item { padding: 5px 8px !important; font-size: 11px !important; }
+    .hf-content { padding: 16px !important; }
+    .hf-balance-row { flex-direction: column !important; gap: 16px !important; }
+    .hf-balance-amount { font-size: 36px !important; letter-spacing: -1.5px !important; }
+    .hf-vault-cards { flex-direction: column !important; }
+    .hf-leaderboard-stats { grid-template-columns: 1fr !important; }
+  }
 `
 
 function EyeIcon() {
@@ -331,52 +345,45 @@ function Dashboard() {
   const vaultLabel = selectedVault === 'yoEUR' ? 'EURC' : 'USDC'
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#0d1117', fontFamily: 'Inter, sans-serif' }}>
       <style>{globalStyles}</style>
 
       {/* Navbar */}
-      <nav style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e5e7eb', padding: '0 32px', height: '58px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
+      <nav style={{ backgroundColor: '#0d1117', borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '0 32px', height: '58px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <HoldFirmLogo size={28} />
-          <span style={{ fontSize: '16px', fontWeight: 600, color: '#111827', letterSpacing: '-0.3px' }}>HoldFirm</span>
+          <span style={{ fontSize: '16px', fontWeight: 600, color: '#ffffff', letterSpacing: '-0.3px' }}>HoldFirm</span>
         </div>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+        <div className='hf-nav-stats' style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           {[
-            { label: 'APY', value: loading ? '—' : `${apy}%`, color: '#15803d' },
-            { label: 'TVL', value: loading ? '—' : `$${tvl}`, color: '#111827' },
-            { label: 'Balance', value: balanceHidden ? hidden : `$${usdcBalance}`, color: '#111827' },
+            { label: 'APY', value: loading ? '—' : `${apy}%`, color: '#4ade80' },
+            { label: 'TVL', value: loading ? '—' : `$${tvl}`, color: '#ffffff' },
+            { label: 'Balance', value: balanceHidden ? hidden : `$${usdcBalance}`, color: '#ffffff' },
           ].map(s => (
             <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 500 }}>{s.label}</span>
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>{s.label}</span>
               <span style={{ fontSize: '13px', color: s.color, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>{s.value}</span>
             </div>
           ))}
-          <div style={{ width: '1px', height: '18px', backgroundColor: '#e5e7eb' }} />
+          <div style={{ width: '1px', height: '18px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
           <ConnectButton />
         </div>
       </nav>
 
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '28px 24px' }}>
+      <div className='hf-page' style={{ maxWidth: '960px', margin: '0 auto', padding: '28px 24px' }}>
 
-        {/* Balance card — dark navy hero */}
+        {/* Balance card */}
         <div style={{
           background: 'linear-gradient(135deg, #0d1117 0%, #111827 60%, #0f1d2e 100%)',
-          borderRadius: '16px',
-          padding: '28px 32px',
-          marginBottom: '16px',
+          borderRadius: '16px', padding: '28px 32px', marginBottom: '16px',
           border: '1px solid rgba(255,255,255,0.07)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-          position: 'relative',
-          overflow: 'hidden',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+          position: 'relative', overflow: 'hidden',
         }}>
-          {/* Subtle grid overlay */}
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)', backgroundSize: '32px 32px', pointerEvents: 'none', borderRadius: '16px' }} />
-          {/* Green glow top-left */}
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '32px 32px', pointerEvents: 'none', borderRadius: '16px' }} />
           <div style={{ position: 'absolute', top: '-60px', left: '-40px', width: '240px', height: '240px', background: 'radial-gradient(ellipse, rgba(74,222,128,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
-
           <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
             <div>
-              {/* Label + hide button */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '12px' }}>
                 <p style={{ margin: 0, fontSize: '11px', fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>Total Savings</p>
                 <button
@@ -389,16 +396,12 @@ function Dashboard() {
                   {balanceHidden ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
-
-              {/* Big balance */}
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '6px' }}>
                 <span style={{ fontSize: '48px', fontWeight: 700, color: '#ffffff', letterSpacing: '-2.5px', lineHeight: 1, fontFamily: 'Inter, sans-serif', filter: balanceHidden ? 'blur(10px)' : 'none', userSelect: balanceHidden ? 'none' : 'auto', transition: 'filter 0.25s ease' }}>
                   ${usdcBalance}
                 </span>
                 <span style={{ fontSize: '15px', color: 'rgba(255,255,255,0.35)' }}>{vaultLabel}</span>
               </div>
-
-              {/* Local currency */}
               <p style={{ fontSize: '16px', color: '#4ade80', fontWeight: 600, marginBottom: '6px', fontFamily: 'Inter, sans-serif', filter: balanceHidden ? 'blur(10px)' : 'none', userSelect: balanceHidden ? 'none' : 'auto', transition: 'filter 0.25s ease' }}>
                 {selectedCurrencyData?.flag} {selectedCurrency} {localBalance}
               </p>
@@ -406,27 +409,15 @@ function Dashboard() {
                 Earning <span style={{ color: '#4ade80', fontWeight: 600 }}>{apy}% APY</span> · Protected from inflation
               </p>
             </div>
-
-            {/* Action buttons */}
             <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-              <button
-                onClick={() => setShowDeposit(true)}
-                style={{ padding: '10px 22px', fontSize: '14px', fontWeight: 600, background: '#4ade80', color: '#0d1117', border: 'none', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'background 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#22c55e')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#4ade80')}
-              >↑ Deposit</button>
-              <button
-                onClick={() => setShowRedeem(true)}
-                style={{ padding: '10px 22px', fontSize: '14px', fontWeight: 500, background: 'rgba(255,255,255,0.08)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'background 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
-              >↓ Withdraw</button>
+              <button className="btn-primary" onClick={() => setShowDeposit(true)}>↑ Deposit</button>
+              <button className="btn-outline" onClick={() => setShowRedeem(true)}>↓ Withdraw</button>
             </div>
           </div>
         </div>
 
         {/* Currency + inflation */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+        <div className='hf-currency-grid' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div className="card" style={{ padding: '20px' }}>
             <p className="section-label" style={{ marginBottom: '12px' }}>Local Currency</p>
             <CurrencySelector selected={selectedCurrency} onChange={setSelectedCurrency} />
@@ -439,9 +430,9 @@ function Dashboard() {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '4px', marginBottom: '14px', backgroundColor: '#e5e7eb', borderRadius: '10px', padding: '3px', border: '1px solid #d1d5db' }}>
+        <div className='hf-tabs' style={{ display: 'flex', gap: '4px', marginBottom: '14px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '10px', padding: '3px', border: '1px solid rgba(255,255,255,0.07)' }}>
           {TABS.map(tab => (
-            <button key={tab} className={`tab-item ${activeTab === tab ? 'active' : ''}`} onClick={() => handleTabChange(tab)}>
+            <button key={tab} className={`tab-item hf-tab-item ${activeTab === tab ? 'active' : ''}`} onClick={() => handleTabChange(tab)}>
               {tab === 'NestSave' ? '💰 NestSave'
                 : tab === 'DisciplineVault' ? '🏦 DisciplineVault'
                 : '🏆 Leaderboard'}
@@ -450,19 +441,19 @@ function Dashboard() {
         </div>
 
         {/* Tab content */}
-        <div className="card" style={{ padding: '28px' }}>
+        <div className="card" className='hf-content' style={{ padding: '28px' }}>
 
           {/* ══ NestSave ══════════════════════════════════════════════════ */}
           {activeTab === 'NestSave' && (
             <div>
               {/* Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', paddingBottom: '18px', borderBottom: '1px solid #f3f4f6' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', paddingBottom: '18px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                 <div>
-                  <h2 className="serif" style={{ fontSize: '26px', color: '#111827', fontWeight: 400, marginBottom: '4px', letterSpacing: '-0.5px' }}>NestSave</h2>
-                  <p style={{ fontSize: '14px', color: '#6b7280' }}>Your savings earning yield every day. Choose your currency.</p>
+                  <h2 className="serif" style={{ fontSize: '26px', color: '#ffffff', fontWeight: 400, marginBottom: '4px', letterSpacing: '-0.5px' }}>NestSave</h2>
+                  <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>Your savings earning yield every day. Choose your currency.</p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '28px', color: '#15803d', fontWeight: 700, lineHeight: 1, fontFamily: 'Inter, sans-serif' }}>{loading ? '—' : `${apy}%`}</div>
+                  <div style={{ fontSize: '28px', color: '#4ade80', fontWeight: 700, lineHeight: 1, fontFamily: 'Inter, sans-serif' }}>{loading ? '—' : `${apy}%`}</div>
                   <div className="section-label" style={{ marginTop: '3px' }}>LIVE APY</div>
                 </div>
               </div>
@@ -471,16 +462,16 @@ function Dashboard() {
               <VaultSelector selected={selectedVault} onChange={setSelectedVault} />
 
               {/* Stats cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+              <div className='hf-stats-grid' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
                 {[
                   { label: 'Total Value Locked', value: loading ? '—' : `$${tvl}`, sub: 'across all savers' },
                   { label: 'Your Balance', value: balanceHidden ? hidden : `$${usdcBalance}`, sub: `in ${vaultLabel}` },
                   { label: 'Local Value', value: balanceHidden ? hidden : `${selectedCurrencyData?.flag} ${localBalance}`, sub: selectedCurrency },
                 ].map(card => (
-                  <div key={card.label} style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #f3f4f6' }}>
+                  <div key={card.label} style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.07)' }}>
                     <p className="section-label" style={{ marginBottom: '8px' }}>{card.label}</p>
-                    <p style={{ fontSize: '20px', color: '#111827', fontWeight: 700, marginBottom: '2px', fontFamily: 'Inter, sans-serif' }}>{card.value}</p>
-                    <p style={{ fontSize: '12px', color: '#9ca3af' }}>{card.sub}</p>
+                    <p style={{ fontSize: '20px', color: '#ffffff', fontWeight: 700, marginBottom: '2px', fontFamily: 'Inter, sans-serif' }}>{card.value}</p>
+                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)' }}>{card.sub}</p>
                   </div>
                 ))}
               </div>
@@ -514,12 +505,8 @@ function Dashboard() {
 
 function App() {
   const { isConnected } = useAccount()
-  const [started, setStarted] = useState(() => localStorage.getItem('holdfirm_started') === 'true')
-  const [showWizard, setShowWizard] = useState(() =>
-    isConnected &&
-    localStorage.getItem('holdfirm_wizard_done') !== 'true' &&
-    localStorage.getItem('holdfirm_started') !== 'true'
-  )
+  const [started, setStarted] = useState(false)
+  const [showWizard, setShowWizard] = useState(false)
 
   function handleWizardComplete() {
     localStorage.setItem('holdfirm_wizard_done', 'true')
@@ -529,12 +516,7 @@ function App() {
   }
 
   function handleStart() {
-    if (localStorage.getItem('holdfirm_wizard_done') === 'true') {
-      localStorage.setItem('holdfirm_started', 'true')
-      setStarted(true)
-    } else {
-      setShowWizard(true)
-    }
+    setShowWizard(true)
   }
 
   useEffect(() => {
