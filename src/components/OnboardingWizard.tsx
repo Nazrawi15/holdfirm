@@ -13,6 +13,7 @@ const CURRENCIES = [
   { code: 'RON', flag: '🇷🇴', country: 'Romania', inflation: '10.4%' },
   { code: 'GEL', flag: '🇬🇪', country: 'Georgia', inflation: '9.5%' },
   { code: 'AOA', flag: '🇦🇴', country: 'Angola', inflation: '20%' },
+  { code: 'USD', flag: '🌍', country: 'Other / Global', inflation: 'varies' },
 ]
 
 const INFLATION_EXPERIENCES = [
@@ -45,27 +46,35 @@ interface WizardState {
 }
 
 const wStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .w-opt {
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+  @keyframes wiz-spin { to { transform: rotate(360deg); } }
+  @keyframes wiz-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes wiz-pulse { 0%,100% { opacity:0.6; transform:scale(1); } 50% { opacity:0; transform:scale(2.2); } }
+  .wiz-opt {
     width: 100%;
     padding: 14px 16px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
     cursor: pointer;
     text-align: left;
-    transition: all 0.12s ease;
+    transition: all 0.15s ease;
     font-family: 'Inter', sans-serif;
   }
-  .w-opt:hover { border-color: #111827; background: #f9fafb; }
-  .w-opt.selected { border-color: #111827; border-width: 2px; background: #f9fafb; }
-  .w-dd-item {
+  .wiz-opt:hover {
+    border-color: rgba(74,222,128,0.4);
+    background: rgba(74,222,128,0.05);
+  }
+  .wiz-opt.selected {
+    border-color: #4ade80;
+    border-width: 1.5px;
+    background: rgba(74,222,128,0.08);
+  }
+  .wiz-dd-item {
     width: 100%;
     padding: 11px 16px;
     border: none;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     background: transparent;
     cursor: pointer;
     text-align: left;
@@ -75,8 +84,8 @@ const wStyles = `
     transition: background 0.1s ease;
     font-family: 'Inter', sans-serif;
   }
-  .w-dd-item:hover { background: #f9fafb; }
-  .w-dd-item:last-child { border-bottom: none; }
+  .wiz-dd-item:hover { background: rgba(255,255,255,0.05); }
+  .wiz-dd-item:last-child { border-bottom: none; }
 `
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
@@ -101,25 +110,24 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           messages: [
             {
               role: 'system',
-              content: `You are a warm, empathetic DeFi savings advisor for HoldFirm — a savings app for people in high-inflation economies. You give short, personal, actionable advice. Never use bullet points. Always write in flowing paragraphs.`,
+              content: `You are a warm, empathetic DeFi savings advisor for HoldFirm — a savings app for people facing inflation or currency risk anywhere in the world. You give short, personal, actionable advice. Never use bullet points. Always write in flowing paragraphs.`,
             },
             {
               role: 'user',
               content: `A user answered 4 questions:
-1. Country: ${wizardState.currency?.country} (${wizardState.currency?.code}, inflation: ${wizardState.currency?.inflation})
+1. Local currency: ${wizardState.currency?.country} (${wizardState.currency?.code}, inflation: ${wizardState.currency?.inflation})
 2. Inflation experience: ${wizardState.experience?.label} — ${wizardState.experience?.desc}
 3. Goal: ${wizardState.goal?.label} — ${wizardState.goal?.desc}
-4. Lock: ${wizardState.lockPref?.label} — ${wizardState.lockPref?.desc}
+4. Lock preference: ${wizardState.lockPref?.label} — ${wizardState.lockPref?.desc}
 
 HoldFirm modes:
-- NestSave: Simple USDC at 4.92% APY. Best for basic inflation protection.
-- GoalStack: Goal-based savings with target + deadline. Best for saving toward something.
-- DisciplineVault: Onchain lock. Early withdrawers pay 4.5% penalty to committed savers. Best for max discipline + earning from others.
+- NestSave: Simple USDC or EURC savings at 4-5% APY. Best for basic inflation protection with full flexibility.
+- DisciplineVault: Onchain lock for 30/60/90 days. Early withdrawers pay 4.5% penalty redistributed to committed savers. Best for discipline + earning from others.
 
 Write exactly 3 short paragraphs under 220 words:
-- Para 1: Acknowledge their situation in ${wizardState.currency?.country} emotionally.
-- Para 2: Recommend the single best HoldFirm mode and explain why.
-- Para 3: Paint a vivid picture of what their savings look like in 90 days.`,
+- Para 1: Acknowledge their financial situation emotionally — works for anyone globally, not just specific countries.
+- Para 2: Recommend the single best HoldFirm mode and explain why it fits their answers.
+- Para 3: Paint a vivid picture of what their savings look like in 90 days if they start today.`,
             },
           ],
         }),
@@ -136,36 +144,44 @@ Write exactly 3 short paragraphs under 220 words:
   const progressSteps = ['currency', 'experience', 'goal', 'lock']
   const currentIndex = progressSteps.indexOf(step)
 
-  const stepTitles: Record<string, string> = {
-    currency: 'Where are you from?',
-    experience: `Lost money to inflation in ${state.currency?.country ?? 'your country'}?`,
-    goal: "What's your main savings goal?",
-    lock: 'How long can you commit?',
+  const stepTitles: Record<string, { title: string; sub: string }> = {
+    currency: { title: 'What\'s your local currency?', sub: 'HoldFirm works everywhere — pick the closest match' },
+    experience: { title: 'Has inflation hurt your savings?', sub: state.currency?.code === 'USD' ? 'Currency risk affects everyone differently' : `Inflation in ${state.currency?.country ?? 'your region'} is ${state.currency?.inflation}` },
+    goal: { title: 'What\'s your main savings goal?', sub: 'We\'ll recommend the best saving mode for you' },
+    lock: { title: 'How long can you commit?', sub: 'Longer locks earn more from the penalty pool' },
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '16px', backdropFilter: 'blur(8px)' }}>
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '16px', backdropFilter: 'blur(12px)' }}>
       <style>{wStyles}</style>
 
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '480px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 64px rgba(0,0,0,0.15)', fontFamily: 'Inter, sans-serif', animation: 'fadeUp 0.3s ease forwards' }}>
+      <div style={{ backgroundColor: '#0d1117', borderRadius: '20px', width: '100%', maxWidth: '500px', maxHeight: '92vh', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(74,222,128,0.05)', fontFamily: 'Inter, sans-serif', animation: 'wiz-up 0.35s ease forwards', position: 'relative', overflow: 'hidden' }}>
 
-        {/* Top bar */}
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #f3f4f6' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '28px', height: '28px', background: '#111827', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>🤖</div>
-              <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>AI Strategy Advisor</span>
+        {/* Subtle green glow top */}
+        <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '300px', background: 'radial-gradient(ellipse, rgba(74,222,128,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+        {/* Header */}
+        <div style={{ padding: '20px 24px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: step !== 'loading' && step !== 'result' ? '16px' : '0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '30px', height: '30px', background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px' }}>🤖</div>
+              <div>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>AI Strategy Advisor</span>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', marginTop: '1px' }}>Powered by Llama 3.3</div>
+              </div>
             </div>
-            <span style={{ fontSize: '12px', color: '#9ca3af', fontFamily: 'DM Mono, monospace' }}>
-              {currentIndex >= 0 ? `${currentIndex + 1} / 4` : ''}
-            </span>
+            {currentIndex >= 0 && (
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>
+                {currentIndex + 1} / 4
+              </span>
+            )}
           </div>
 
           {/* Progress bar */}
           {currentIndex >= 0 && (
             <div style={{ display: 'flex', gap: '4px' }}>
               {progressSteps.map((s, i) => (
-                <div key={s} style={{ flex: 1, height: '3px', borderRadius: '2px', backgroundColor: i <= currentIndex ? '#111827' : '#e5e7eb', transition: 'background-color 0.3s' }} />
+                <div key={s} style={{ flex: 1, height: '3px', borderRadius: '2px', background: i <= currentIndex ? '#4ade80' : 'rgba(255,255,255,0.08)', transition: 'background 0.3s ease' }} />
               ))}
             </div>
           )}
@@ -176,48 +192,58 @@ Write exactly 3 short paragraphs under 220 words:
 
           {/* Step heading */}
           {currentIndex >= 0 && (
-            <p style={{ fontSize: '16px', fontWeight: 600, color: '#111827', margin: '0 0 16px 0' }}>
-              {stepTitles[step]}
-            </p>
+            <div style={{ marginBottom: '20px' }}>
+              <p style={{ fontSize: '18px', fontWeight: 600, color: '#ffffff', margin: '0 0 4px 0', fontFamily: 'Instrument Serif, Georgia, serif', letterSpacing: '-0.3px' }}>
+                {stepTitles[step]?.title}
+              </p>
+              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+                {stepTitles[step]?.sub}
+              </p>
+            </div>
           )}
 
-          {/* Step 1: Country dropdown */}
+          {/* STEP 1: Currency picker */}
           {step === 'currency' && (
             <div>
               <div style={{ position: 'relative', marginBottom: '16px' }}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid #d1d5db', background: '#ffffff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif', transition: 'border-color 0.12s' }}
+                  style={{ width: '100%', padding: '13px 16px', borderRadius: '10px', border: `1px solid ${state.currency ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.1)'}`, background: state.currency ? 'rgba(74,222,128,0.06)' : 'rgba(255,255,255,0.03)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif', transition: 'all 0.15s' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     {state.currency ? (
                       <>
-                        <span style={{ fontSize: '20px' }}>{state.currency.flag}</span>
+                        <span style={{ fontSize: '22px' }}>{state.currency.flag}</span>
                         <div style={{ textAlign: 'left' }}>
-                          <div style={{ fontSize: '14px', fontWeight: 500, color: '#111827' }}>{state.currency.country}</div>
-                          <div style={{ fontSize: '11px', color: '#9ca3af', fontFamily: 'DM Mono, monospace' }}>Inflation: {state.currency.inflation}</div>
+                          <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>{state.currency.country}</div>
+                          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>
+                            {state.currency.code === 'USD' ? 'Save in USD · works globally' : `${state.currency.inflation} annual inflation`}
+                          </div>
                         </div>
                       </>
                     ) : (
-                      <span style={{ fontSize: '14px', color: '#9ca3af' }}>Select your country...</span>
+                      <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.35)' }}>Select your local currency...</span>
                     )}
                   </div>
-                  <span style={{ fontSize: '11px', color: '#6b7280' }}>{dropdownOpen ? '▲' : '▼'}</span>
+                  <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>{dropdownOpen ? '▲' : '▼'}</span>
                 </button>
 
                 {dropdownOpen && (
-                  <div style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, zIndex: 100, backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', maxHeight: '260px', overflowY: 'auto' }}>
+                  <div style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 100, backgroundColor: '#161b22', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 16px 40px rgba(0,0,0,0.5)', maxHeight: '280px', overflowY: 'auto' }}>
                     {CURRENCIES.map(c => (
                       <button
                         key={c.code}
-                        className="w-dd-item"
+                        className="wiz-dd-item"
                         onClick={() => { setState(s => ({ ...s, currency: c })); setDropdownOpen(false) }}
                       >
-                        <span style={{ fontSize: '18px' }}>{c.flag}</span>
+                        <span style={{ fontSize: '20px' }}>{c.flag}</span>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: '13px', fontWeight: 500, color: '#111827' }}>{c.country}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 500, color: '#ffffff' }}>{c.country}</div>
+                          {c.code === 'USD' && <div style={{ fontSize: '11px', color: 'rgba(74,222,128,0.7)' }}>HoldFirm works everywhere</div>}
                         </div>
-                        <span style={{ fontSize: '11px', color: '#9ca3af', fontFamily: 'DM Mono, monospace' }}>{c.inflation} inflation</span>
+                        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>
+                          {c.code === 'USD' ? 'Global' : `${c.inflation} inflation`}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -227,96 +253,106 @@ Write exactly 3 short paragraphs under 220 words:
               {state.currency && (
                 <button
                   onClick={() => setStep('experience')}
-                  style={{ width: '100%', padding: '13px', borderRadius: '8px', border: 'none', background: '#111827', color: '#ffffff', fontWeight: 600, fontSize: '14px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                  style={{ width: '100%', padding: '13px', borderRadius: '10px', border: 'none', background: '#4ade80', color: '#0d1117', fontWeight: 700, fontSize: '15px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'background 0.15s' }}
                 >
                   Continue →
                 </button>
               )}
+
+              <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)', textAlign: 'center', marginTop: '12px', lineHeight: 1.5 }}>
+                Don't see your currency? Choose "Other / Global" — HoldFirm works everywhere.
+              </p>
             </div>
           )}
 
-          {/* Step 2: Experience */}
+          {/* STEP 2: Experience */}
           {step === 'experience' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {INFLATION_EXPERIENCES.map(e => (
                 <button
                   key={e.id}
-                  className="w-opt"
+                  className="wiz-opt"
                   onClick={() => { setState(s => ({ ...s, experience: e })); setStep('goal') }}
                 >
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#111827', marginBottom: '2px' }}>{e.label}</div>
-                  <div style={{ fontSize: '12px', color: '#6b7280' }}>{e.desc}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>{e.label}</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>{e.desc}</div>
                 </button>
               ))}
             </div>
           )}
 
-          {/* Step 3: Goal */}
+          {/* STEP 3: Goal */}
           {step === 'goal' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {GOALS.map(g => (
                 <button
                   key={g.id}
-                  className="w-opt"
+                  className="wiz-opt"
                   onClick={() => { setState(s => ({ ...s, goal: g })); setStep('lock') }}
                 >
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#111827', marginBottom: '2px' }}>{g.label}</div>
-                  <div style={{ fontSize: '12px', color: '#6b7280' }}>{g.desc}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>{g.label}</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>{g.desc}</div>
                 </button>
               ))}
             </div>
           )}
 
-          {/* Step 4: Lock */}
+          {/* STEP 4: Lock */}
           {step === 'lock' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {LOCK_PREFS.map(l => (
                 <button
                   key={l.id}
-                  className="w-opt"
+                  className="wiz-opt"
                   onClick={() => { const ns = { ...state, lockPref: l }; setState(ns); getRecommendation(ns) }}
                 >
-                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#111827', marginBottom: '2px' }}>{l.label}</div>
-                  <div style={{ fontSize: '12px', color: '#6b7280' }}>{l.desc}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>{l.label}</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>{l.desc}</div>
                 </button>
               ))}
             </div>
           )}
 
-          {/* Loading */}
+          {/* LOADING */}
           {step === 'loading' && (
-            <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-              <div style={{ width: '36px', height: '36px', border: '2px solid #e5e7eb', borderTop: '2px solid #111827', borderRadius: '50%', animation: 'spin 0.7s linear infinite', margin: '0 auto 20px' }} />
-              <p style={{ fontSize: '15px', fontWeight: 600, color: '#111827', margin: '0 0 6px 0' }}>Analyzing your situation...</p>
-              <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0 }}>Building your personalized strategy</p>
+            <div style={{ textAlign: 'center', padding: '48px 20px' }}>
+              {/* Animated dots */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '28px' }}>
+                {[0, 1, 2].map(i => (
+                  <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80', animation: `wiz-pulse 1.4s ease-in-out ${i * 0.2}s infinite` }} />
+                ))}
+              </div>
+              <p style={{ fontSize: '17px', fontWeight: 600, color: '#ffffff', margin: '0 0 8px 0', fontFamily: 'Instrument Serif, Georgia, serif' }}>Analyzing your situation...</p>
+              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>Building your personalized savings strategy</p>
             </div>
           )}
 
-          {/* Result */}
+          {/* RESULT */}
           {step === 'result' && (
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '24px' }}>{state.currency?.flag}</span>
+            <div style={{ animation: 'wiz-up 0.35s ease forwards' }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', padding: '14px 16px', background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)', borderRadius: '12px' }}>
+                <span style={{ fontSize: '28px' }}>{state.currency?.flag}</span>
                 <div>
-                  <p style={{ fontSize: '15px', fontWeight: 600, color: '#111827', margin: 0 }}>Your personalized strategy</p>
-                  <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, fontFamily: 'DM Mono, monospace' }}>Powered by Llama 3.3 · Based on your answers</p>
+                  <p style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', margin: 0 }}>Your personalized strategy</p>
+                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', margin: 0, marginTop: '2px' }}>Powered by Llama 3.3 · Based on your answers</p>
                 </div>
               </div>
 
               {error ? (
-                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '14px', marginBottom: '16px' }}>
-                  <p style={{ color: '#dc2626', fontSize: '14px', margin: 0 }}>{error}</p>
+                <div style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
+                  <p style={{ color: '#f87171', fontSize: '14px', margin: 0 }}>{error}</p>
                 </div>
               ) : (
-                <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '18px', marginBottom: '16px' }}>
-                  <p style={{ color: '#374151', fontSize: '14px', lineHeight: 1.75, margin: 0 }}>{recommendation}</p>
+                <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '18px', marginBottom: '16px' }}>
+                  <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', lineHeight: 1.8, margin: 0 }}>{recommendation}</p>
                 </div>
               )}
 
               {/* Tags */}
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '20px' }}>
                 {[state.currency?.country, state.goal?.label, state.lockPref?.label].filter(Boolean).map((tag, i) => (
-                  <span key={i} style={{ background: '#f3f4f6', color: '#374151', fontSize: '11px', fontWeight: 500, padding: '4px 10px', borderRadius: '20px', border: '1px solid #e5e7eb' }}>{tag}</span>
+                  <span key={i} style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', fontSize: '11px', fontWeight: 500, padding: '4px 10px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.08)' }}>{tag}</span>
                 ))}
               </div>
 
@@ -324,13 +360,13 @@ Write exactly 3 short paragraphs under 220 words:
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   onClick={() => { setStep('currency'); setState({ currency: null, experience: null, goal: null, lockPref: null }); setRecommendation(''); setError('') }}
-                  style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb', background: '#ffffff', color: '#6b7280', fontWeight: 500, fontSize: '14px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                  style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(255,255,255,0.5)', fontWeight: 500, fontSize: '14px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
                 >
                   Start over
                 </button>
                 <button
                   onClick={onComplete}
-                  style={{ flex: 2, padding: '12px', borderRadius: '8px', border: 'none', background: '#111827', color: '#ffffff', fontWeight: 600, fontSize: '14px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+                  style={{ flex: 2, padding: '12px', borderRadius: '10px', border: 'none', background: '#4ade80', color: '#0d1117', fontWeight: 700, fontSize: '14px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
                 >
                   Start Saving →
                 </button>
