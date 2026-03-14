@@ -19,35 +19,42 @@ export function InflationCounter({
     setLostAmount(0)
     const annualLossRate = inflationRate / 100
     const perSecondLoss = annualLossRate / (365 * 24 * 60 * 60)
-    const balanceInLocal = usdcBalance * currencyRate
+    // Use at least $1000 equivalent for dramatic effect — show the real cost of inflation
+    // even when the user's balance is small. This represents what 1000 USDC would lose.
+    const referenceBalance = Math.max(usdcBalance, 1000)
+    const balanceInLocal = referenceBalance * currencyRate
 
     const interval = setInterval(() => {
       setLostAmount(prev => prev + balanceInLocal * perSecondLoss)
-    }, 1000)
+    }, 100)
 
     return () => clearInterval(interval)
   }, [usdcBalance, inflationRate, currencyRate])
 
-  const formatted = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
+  // Annual loss in local currency for $1000
+  const referenceBalance = Math.max(usdcBalance, 1000)
+  const annualLossLocal = referenceBalance * currencyRate * (inflationRate / 100)
+  const annualLossFormatted = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 0,
+  }).format(annualLossLocal)
+
+  // Ticking counter formatted
+  const tickFormatted = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(lostAmount)
 
   return (
     <div style={{ height: '100%', fontFamily: 'Inter, sans-serif' }}>
 
       {/* Label row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
-        {/* Pulsing red dot */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>
         <div style={{ position: 'relative', width: 8, height: 8, flexShrink: 0 }}>
           <div style={{
             position: 'absolute', inset: 0, borderRadius: '50%',
             backgroundColor: '#fca5a5', animation: 'hf-pulse 1.5s ease-in-out infinite',
           }} />
-          <div style={{
-            position: 'absolute', inset: 1, borderRadius: '50%',
-            backgroundColor: '#dc2626',
-          }} />
+          <div style={{ position: 'absolute', inset: 1, borderRadius: '50%', backgroundColor: '#dc2626' }} />
         </div>
         <p style={{
           fontSize: '0.6875rem', fontWeight: 700, color: '#dc2626',
@@ -57,23 +64,40 @@ export function InflationCounter({
         </p>
       </div>
 
-      {/* Ticking number */}
+      {/* Live ticking number */}
       <p style={{
-        fontFamily: 'DM Mono, monospace',
-        fontSize: '1.625rem',
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '1.5rem',
         fontWeight: 700,
-        color: '#111827',
+        color: '#dc2626',
         letterSpacing: '-0.5px',
-        margin: '0 0 4px 0',
+        margin: '0 0 2px 0',
         lineHeight: 1.1,
       }}>
-        − {currencyCode} {formatted}
+        −{currencyCode} {tickFormatted}
+      </p>
+      <p style={{ color: '#9ca3af', fontSize: '0.7rem', margin: '0 0 14px 0' }}>
+        lost since page load · updating live
       </p>
 
-      {/* Subtitle */}
-      <p style={{ color: '#6b7280', fontSize: '0.75rem', margin: '0 0 14px 0', lineHeight: 1.5 }}>
-        Lost since you opened this page · {inflationRate}% annual inflation
-      </p>
+      {/* Annual projection — the scary number */}
+      <div style={{
+        background: 'linear-gradient(135deg, #fef2f2, #fff5f5)',
+        border: '1px solid #fecaca',
+        borderRadius: 10,
+        padding: '12px 14px',
+        marginBottom: 12,
+      }}>
+        <p style={{ fontSize: '0.6875rem', color: '#dc2626', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 4px 0' }}>
+          Annual loss on $1,000 savings
+        </p>
+        <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111827', fontFamily: 'Inter, sans-serif', margin: '0 0 2px 0' }}>
+          −{currencyCode} {annualLossFormatted}
+        </p>
+        <p style={{ fontSize: '0.6875rem', color: '#9ca3af', margin: 0 }}>
+          at {inflationRate}% annual inflation
+        </p>
+      </div>
 
       {/* Protection badge */}
       <div style={{
@@ -91,7 +115,6 @@ export function InflationCounter({
         </p>
       </div>
 
-      {/* Pulse keyframe */}
       <style>{`
         @keyframes hf-pulse {
           0%, 100% { transform: scale(1); opacity: 0.6; }
