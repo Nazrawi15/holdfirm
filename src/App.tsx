@@ -14,6 +14,7 @@ import { VaultSelector } from './components/VaultSelector'
 import { APYChart } from './components/APYChart'
 import { Leaderboard } from './components/Leaderboard'
 import type { VaultKey } from './lib/yo'
+import { useUserHistory } from '@yo-protocol/react'
 
 const TABS = ['NestSave', 'DisciplineVault', 'Leaderboard'] as const
 type Tab = typeof TABS[number]
@@ -438,6 +439,61 @@ function LandingPage({ onStart }: { onStart: () => void }) {
   )
 }
 
+
+// ── Recent Activity Component ────────────────────────────────────────────────
+const YOUSD_VAULT = '0x0000000f2eb9f69274678c76222b35eec7588a65' as const
+
+function RecentActivity() {
+  const { address } = useAccount()
+  const { history, isLoading } = useUserHistory(YOUSD_VAULT, address, { limit: 5, enabled: !!address })
+
+  if (isLoading) {
+    return (
+      <div style={{ marginTop: '20px', padding: '16px', backgroundColor: '#faf6f0', borderRadius: '10px', border: '1px solid #f0ebe3', textAlign: 'center' }}>
+        <div style={{ width: '18px', height: '18px', border: '2px solid #e8e0d8', borderTopColor: '#10b981', borderRadius: '50%', animation: 'hf-spin 0.75s linear infinite', margin: '0 auto' }} />
+        <style>{`@keyframes hf-spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    )
+  }
+
+  // console.log('YO history:', history)
+  const transactions = history?.slice(0, 5) ?? []
+
+  if (!address || transactions.length === 0) return null
+
+  return (
+    <div style={{ marginTop: '24px' }}>
+      <p className="section-label" style={{ marginBottom: '12px' }}>Recent Activity</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {transactions.map((tx: any, i: number) => {
+          const isDeposit = tx.type === 'deposit'
+          const amount = tx.assets?.formatted ?? '—'
+          const date = tx.blockTimestamp ? new Date(Number(tx.blockTimestamp) * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'
+          return (
+            <a key={i} href={`https://basescan.org/tx/${tx.transactionHash}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', backgroundColor: '#faf6f0', borderRadius: '10px', border: '1px solid #f0ebe3', textDecoration: 'none' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: isDeposit ? '#d1fae5' : '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                  {isDeposit ? '↑' : '↓'}
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', fontWeight: 700, color: '#1c1917', margin: 0 }}>{isDeposit ? 'Deposit' : 'Withdrawal'}</p>
+                  <p style={{ fontSize: '12px', color: '#78716c', margin: 0, fontWeight: 500 }}>{date}</p>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ fontSize: '14px', fontWeight: 800, color: isDeposit ? '#059669' : '#d97706', margin: 0, fontFamily: "'DM Mono', monospace" }}>
+                  {isDeposit ? '+' : '-'}{amount}
+                </p>
+                <p style={{ fontSize: '11px', color: '#a8a29e', margin: 0, fontWeight: 500 }}>USDC</p>
+              </div>
+            </a>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 // ── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard() {
   const [selectedVault, setSelectedVault] = useState<VaultKey>('yoUSD')
@@ -591,6 +647,7 @@ function Dashboard() {
               </div>
 
               <APYChart vaultKey={selectedVault} />
+              <RecentActivity />
             </div>
           )}
 
