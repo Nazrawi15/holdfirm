@@ -240,6 +240,26 @@ function DashboardMockup() {
 }
 
 // ── Landing Page ─────────────────────────────────────────────────────────────
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div style={{ border: '1px solid #e8e0d8', borderRadius: '12px', overflow: 'hidden', background: '#fefcf9', marginBottom: '8px' }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 22px', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif", textAlign: 'left', gap: '16px' }}
+      >
+        <span style={{ fontSize: '15px', fontWeight: 700, color: '#1c1917', lineHeight: 1.4 }}>{question}</span>
+        <span style={{ fontSize: '18px', color: '#10b981', fontWeight: 700, flexShrink: 0, transition: 'transform 0.2s', transform: open ? 'rotate(45deg)' : 'rotate(0deg)', display: 'inline-block' }}>+</span>
+      </button>
+      {open && (
+        <div style={{ padding: '0 22px 18px', borderTop: '1px solid #f0ebe3' }}>
+          <p style={{ fontSize: '14px', color: '#44403c', lineHeight: 1.75, margin: '14px 0 0', fontWeight: 500 }}>{answer}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function LandingPage({ onStart }: { onStart: () => void }) {
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setTimeout(() => setMounted(true), 50) }, [])
@@ -315,7 +335,7 @@ function LandingPage({ onStart }: { onStart: () => void }) {
               { label: 'APY', value: '4.92%', color: '#10b981' },
               { label: 'TVL', value: '$39M+', color: '#1c1917' },
               { label: 'Countries', value: '12', color: '#1c1917' },
-              { label: 'Contract', value: 'Verified ✓', color: '#f59e0b' },
+              { label: 'Contract', value: 'Open Source', color: '#f59e0b' },
             ].map(s => (
               <div key={s.label}>
                 <div style={{ fontSize: '22px', color: s.color, fontWeight: 800, lineHeight: 1, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{s.value}</div>
@@ -365,6 +385,52 @@ function LandingPage({ onStart }: { onStart: () => void }) {
                 <span key={f} style={{ fontSize: '22px' }}>{f}</span>
               ))}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div style={{ background: '#fdf8f3', borderTop: '1px solid #e8e0d8' }}>
+        <div style={{ maxWidth: '780px', margin: '0 auto', padding: '80px 48px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '52px' }}>
+            <h2 className="serif" style={{ fontSize: '38px', color: '#1c1917', fontWeight: 400, letterSpacing: '-0.8px', marginBottom: '12px' }}>
+              Frequently asked questions
+            </h2>
+            <p style={{ fontSize: '16px', color: '#78716c' }}>Everything you need to know before saving with HoldFirm.</p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {[
+              { q: 'Where does the yield come from?', a: 'Your USDC or EURC is deposited into YO Protocol vaults — audited, onchain yield infrastructure built on Base. The current APY is around 4.92%, generated from real DeFi activity, not token emissions.' },
+              { q: 'What happens if I withdraw early from DisciplineVault?', a: 'You pay a 4.5% penalty on your shares. That penalty is automatically redistributed to everyone who stayed locked. Your principal minus the penalty is returned instantly to your wallet.' },
+              { q: 'Is HoldFirm audited?', a: 'YO Protocol vaults are audited infrastructure. The DisciplineVault contract is unaudited — only deposit what you can afford to lose. The contract is open source and visible on Basescan.' },
+              { q: 'Who controls my funds?', a: 'Nobody. HoldFirm is fully non-custodial. Your funds are held by smart contracts on Base mainnet, not by us. We have no admin keys, no ability to pause withdrawals, and no access to your money.' },
+              { q: 'What is the difference between NestSave and DisciplineVault?', a: 'NestSave is flexible — deposit and withdraw anytime, earn ~4.92% APY. DisciplineVault locks your funds for 30, 60, or 90 days. Early withdrawers pay a penalty that goes to committed savers, so patient savers earn more.' },
+              { q: 'Can I save in euros instead of dollars?', a: 'Yes. HoldFirm supports both yoUSD (USDC savings) and yoEUR (EURC savings). Choose the currency that best protects you from your local inflation.' },
+              { q: 'Do I need KYC or an account?', a: 'No. HoldFirm requires only a Web3 wallet like MetaMask. No email, no ID verification, no account creation. Connect your wallet and start saving in seconds.' },
+              { q: 'What blockchain is HoldFirm on?', a: 'Base mainnet — an Ethereum L2 built by Coinbase. Transactions are fast, gas fees are low (typically under $0.01), and the network is backed by Coinbase infrastructure.' },
+              { q: 'What is the minimum deposit?', a: 'There is no minimum deposit set by HoldFirm. However, very small deposits may not be economical after gas fees. We recommend at least $10 to start.' },
+              { q: 'How do I claim my penalty rewards from DisciplineVault?', a: 'When other savers withdraw early, their penalties are automatically allocated to your position. You can claim them anytime by clicking "Claim Rewards" in the DisciplineVault tab.' },
+            ].map((item, i) => (
+              <FAQItem key={i} question={item.q} answer={item.a} />
+            ))}
+          </div>
+
+          {/* Contact */}
+          <div style={{ marginTop: '56px', padding: '32px', background: 'linear-gradient(135deg, rgba(245,158,11,0.06), rgba(16,185,129,0.06))', border: '1px solid #e8e0d8', borderRadius: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '28px', marginBottom: '12px' }}>💬</div>
+            <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1c1917', marginBottom: '8px' }}>Still have questions?</h3>
+            <p style={{ fontSize: '15px', color: '#78716c', marginBottom: '20px', fontWeight: 500 }}>
+              Reach out directly — we're happy to help.
+            </p>
+            <a
+              href="https://t.me/Nasrohassen"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 28px', background: '#1c1917', color: '#fdf8f3', borderRadius: '10px', textDecoration: 'none', fontWeight: 700, fontSize: '15px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              <span>✈️</span> Contact us on Telegram @Nasrohassen
+            </a>
           </div>
         </div>
       </div>
