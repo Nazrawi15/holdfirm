@@ -7,9 +7,9 @@ const ERC20_ABI = [
 ] as const
 
 const s = {
-  label: { fontSize: '11px', fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.85)', marginBottom: '6px' },
-  card: { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '16px' },
-  divider: { height: '1px', background: 'rgba(255,255,255,0.07)', margin: '20px 0' },
+  label: { fontSize: '12px', fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase' as const, color: '#44403c', marginBottom: '8px' },
+  card: { background: '#faf6f0', border: '1px solid #e8e0d8', borderRadius: '12px', padding: '18px' },
+  divider: { height: '1px', background: '#ede8e1', margin: '20px 0' },
 }
 
 function ProjectedEarnings({ amount, lockDays, apy }: { amount: string; lockDays: number; apy: number }) {
@@ -25,19 +25,19 @@ function ProjectedEarnings({ amount, lockDays, apy }: { amount: string; lockDays
   const apyHigh = (apy + 8).toFixed(1)
 
   return (
-    <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', overflow: 'hidden', marginBottom: '16px' }}>
-      <div style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>Projected earnings · {lockDays} days</span>
-        <span style={{ fontSize: '13px', fontWeight: 700, color: '#4ade80', fontFamily: 'Inter, sans-serif' }}>{apyLow}% – {apyHigh}% APY</span>
+    <div style={{ border: '1px solid #e8e0d8', borderRadius: '10px', overflow: 'hidden', marginBottom: '16px' }}>
+      <div style={{ padding: '12px 16px', background: '#faf6f0', borderBottom: '1px solid #ede8e1', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '13px', fontWeight: 700, color: '#1c1917' }}>Projected earnings · {lockDays} days</span>
+        <span style={{ fontSize: '14px', fontWeight: 800, color: '#059669', fontFamily: "'DM Mono', monospace" }}>{apyLow}% – {apyHigh}% APY</span>
       </div>
       <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>Deposit</span>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', fontFamily: 'Inter, sans-serif' }}>${deposit.toFixed(2)} USDC</span>
+          <span style={{ fontSize: '14px', color: '#44403c', fontWeight: 500 }}>Deposit</span>
+          <span style={{ fontSize: '14px', fontWeight: 700, color: '#1c1917', fontFamily: "'DM Mono', monospace" }}>${deposit.toFixed(2)} USDC</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>Base YO yield ({apy}% APY)</span>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: '#4ade80', fontFamily: 'Inter, sans-serif' }}>+${baseYield.toFixed(4)}</span>
+          <span style={{ fontSize: '14px', color: '#44403c', fontWeight: 500 }}>Base YO yield ({apy}% APY)</span>
+          <span style={{ fontSize: '14px', fontWeight: 700, color: '#059669', fontFamily: "'DM Mono', monospace" }}>+${baseYield.toFixed(4)}</span>
         </div>
         <div style={s.divider} />
         <p style={{ ...s.label, margin: 0 }}>Penalty rewards from early withdrawers</p>
@@ -49,9 +49,9 @@ function ProjectedEarnings({ amount, lockDays, apy }: { amount: string; lockDays
           <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: row.label === 'Low activity' ? '#fbbf24' : row.label === 'Medium activity' ? '#f97316' : '#ef4444' }} />
-              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>{row.label}</span>
+              <span style={{ fontSize: '14px', color: '#44403c', fontWeight: 500 }}>{row.label}</span>
             </div>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#4ade80', fontFamily: 'Inter, sans-serif' }}>+${row.value.toFixed(4)}</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: '#059669', fontFamily: "'DM Mono', monospace" }}>+${row.value.toFixed(4)}</span>
           </div>
         ))}
       </div>
@@ -121,24 +121,24 @@ export function DisciplineVaultPanel() {
   const hasShares = !!(userShares && userShares > BigInt(0))
 
   return (
-    <div style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', paddingBottom: '18px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', paddingBottom: '18px', borderBottom: '1px solid #ede8e1' }}>
         <div>
-          <h2 style={{ fontSize: '26px', color: '#ffffff', fontWeight: 400, marginBottom: '4px', letterSpacing: '-0.5px', fontFamily: 'Instrument Serif, Georgia, serif' }}>DisciplineVault</h2>
-          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.85)', margin: 0 }}>Lock savings. Earn from early withdrawals. Fully onchain.</p>
+          <h2 style={{ fontSize: '30px', color: '#1c1917', fontWeight: 400, marginBottom: '6px', letterSpacing: '-0.5px', fontFamily: 'Instrument Serif, Georgia, serif' }}>DisciplineVault</h2>
+          <p style={{ fontSize: '15px', color: '#44403c', fontWeight: 500, margin: 0 }}>Lock savings. Earn from early withdrawals. Fully onchain.</p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#ffffff', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>{depositorCount?.toString() ?? '0'}</div>
-          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', fontWeight: 600, letterSpacing: '0.5px', marginTop: '2px' }}>ACTIVE SAVERS</div>
+          <div style={{ fontSize: '26px', fontWeight: 800, color: '#1c1917', fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1 }}>{depositorCount?.toString() ?? '0'}</div>
+          <div style={{ fontSize: '12px', color: '#44403c', fontWeight: 700, letterSpacing: '0.5px', marginTop: '3px' }}>ACTIVE SAVERS</div>
         </div>
       </div>
 
       {/* How it works banner */}
-      <div style={{ background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px' }}>
-        <p style={{ fontSize: '13px', color: '#fbbf24', fontWeight: 600, marginBottom: '4px' }}>How it works</p>
-        <p style={{ fontSize: '13px', color: 'rgba(251,191,36,0.9)', margin: 0, lineHeight: 1.6 }}>
+      <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px' }}>
+        <p style={{ fontSize: '14px', color: '#d97706', fontWeight: 800, marginBottom: '6px' }}>How it works</p>
+        <p style={{ fontSize: '14px', color: '#78350f', fontWeight: 500, margin: 0, lineHeight: 1.7 }}>
           Lock USDC for 30, 60, or 90 days. If anyone withdraws early, they pay a <strong>4.5% penalty</strong> — automatically distributed to everyone who stayed committed. <strong>Every early withdrawal makes your position more valuable.</strong> Patience pays.
         </p>
       </div>
@@ -146,35 +146,35 @@ export function DisciplineVaultPanel() {
       {/* Stats row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
         {[
-          { label: 'Your Shares', value: sharesFormatted, color: '#ffffff' },
-          { label: 'Pending Rewards', value: pendingFormatted, color: '#4ade80' },
-          { label: 'Total Earned', value: totalEarnedFormatted, color: '#ffffff' },
-          { label: 'Days Left', value: hasShares ? (isLocked ? `${daysRemaining}d` : '✅ Free') : '—', color: isLocked ? '#60a5fa' : '#ffffff' },
+          { label: 'Your Shares', value: sharesFormatted, color: '#1c1917' },
+          { label: 'Pending Rewards', value: pendingFormatted, color: '#10b981' },
+          { label: 'Total Earned', value: totalEarnedFormatted, color: '#1c1917' },
+          { label: 'Days Left', value: hasShares ? (isLocked ? `${daysRemaining}d` : '✅ Free') : '—', color: isLocked ? '#4f46e5' : '#1c1917' },
         ].map(stat => (
           <div key={stat.label} style={s.card}>
             <p style={s.label}>{stat.label}</p>
-            <p style={{ fontSize: '16px', fontWeight: 700, color: stat.color, margin: 0, fontFamily: 'Inter, sans-serif' }}>{stat.value}</p>
+            <p style={{ fontSize: '19px', fontWeight: 800, color: stat.color, margin: 0, fontFamily: "'DM Mono', monospace" }}>{stat.value}</p>
           </div>
         ))}
       </div>
 
       {/* 🎰 Discipline Jackpot */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 18px', background: 'linear-gradient(135deg, rgba(251,191,36,0.1) 0%, rgba(245,158,11,0.07) 100%)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: '10px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 18px', background: 'linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(245,158,11,0.07) 100%)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '10px', marginBottom: '20px' }}>
         <div>
-          <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#fbbf24', margin: '0 0 6px 0' }}>🎰 Discipline Jackpot</p>
-          <p style={{ fontSize: '24px', fontWeight: 700, color: '#ffffff', margin: '0 0 4px 0', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
-            {totalPenaltyFormatted} <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>yoUSD</span>
+          <p style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#d97706', margin: '0 0 8px 0' }}>🎰 Discipline Jackpot</p>
+          <p style={{ fontSize: '28px', fontWeight: 800, color: '#1c1917', margin: '0 0 4px 0', fontFamily: "'DM Mono', monospace", lineHeight: 1 }}>
+            {totalPenaltyFormatted} <span style={{ fontSize: '14px', color: '#78716c', fontWeight: 500 }}>yoUSD</span>
           </p>
-          <p style={{ fontSize: '12px', color: 'rgba(251,191,36,0.85)', margin: 0 }}>Paid by weak hands. Waiting for diamond hands.</p>
+          <p style={{ fontSize: '14px', color: '#92400e', fontWeight: 600, margin: 0 }}>Paid by weak hands. Waiting for diamond hands.</p>
         </div>
         <div style={{ fontSize: '32px' }}>💎</div>
       </div>
 
       {/* Lock period info */}
       {hasShares && userLockPeriod && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(96,165,250,0.08)', border: '1px solid rgba(96,165,250,0.2)', borderRadius: '10px', marginBottom: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#60a5fa', fontWeight: 600 }}>Your lock period: {userLockPeriod.toString()} days</span>
-          {isLocked && <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>{daysRemaining} days remaining</span>}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: '10px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#4f46e5', fontWeight: 600 }}>Your lock period: {userLockPeriod.toString()} days</span>
+          {isLocked && <span style={{ fontSize: '14px', color: '#44403c', fontWeight: 500 }}>{daysRemaining} days remaining</span>}
         </div>
       )}
 
@@ -182,7 +182,7 @@ export function DisciplineVaultPanel() {
       {hasPendingReward && step === 'idle' && (
         <button
           onClick={handleClaim}
-          style={{ width: '100%', marginBottom: '16px', background: '#4ade80', color: '#0d1117', fontWeight: 700, fontSize: '14px', padding: '13px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+          style={{ width: '100%', marginBottom: '16px', background: '#10b981', color: '#fdf8f3', fontWeight: 700, fontSize: '14px', padding: '13px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Claim {pendingFormatted} yoUSD from penalty pool →
         </button>
@@ -203,14 +203,14 @@ export function DisciplineVaultPanel() {
                 key={opt.days}
                 onClick={() => setLockDays(opt.days)}
                 style={{
-                  padding: '12px', borderRadius: '8px', cursor: 'pointer',
-                  border: lockDays === opt.days ? '2px solid #4ade80' : '1px solid rgba(255,255,255,0.1)',
-                  background: lockDays === opt.days ? 'rgba(74,222,128,0.1)' : 'rgba(255,255,255,0.03)',
-                  transition: 'all 0.12s ease', textAlign: 'center' as const, fontFamily: 'Inter, sans-serif',
+                  padding: '14px 12px', borderRadius: '10px', cursor: 'pointer',
+                  border: lockDays === opt.days ? '2px solid #10b981' : '1.5px solid #d6cdc3',
+                  background: lockDays === opt.days ? 'rgba(16,185,129,0.08)' : '#faf6f0',
+                  transition: 'all 0.12s ease', textAlign: 'center' as const, fontFamily: "'Plus Jakarta Sans', sans-serif",
                 }}
               >
-                <div style={{ fontSize: '14px', fontWeight: 600, color: lockDays === opt.days ? '#4ade80' : '#ffffff' }}>{opt.label}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', marginTop: '2px' }}>{opt.sub}</div>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: lockDays === opt.days ? '#059669' : '#1c1917' }}>{opt.label}</div>
+                <div style={{ fontSize: '12px', color: '#78716c', fontWeight: 500, marginTop: '3px' }}>{opt.sub}</div>
               </button>
             ))}
           </div>
@@ -222,11 +222,11 @@ export function DisciplineVaultPanel() {
               value={amount}
               onChange={e => setAmount(e.target.value)}
               placeholder="0.00"
-              style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', borderRadius: '8px', padding: '11px 14px', fontSize: '15px', outline: 'none', fontFamily: 'Inter, sans-serif', fontWeight: 600 }}
+              style={{ flex: 1, background: '#ffffff', border: '1.5px solid #d6cdc3', color: '#1c1917', borderRadius: '10px', padding: '13px 16px', fontSize: '16px', outline: 'none', fontFamily: "'DM Mono', monospace", fontWeight: 600 }}
             />
             <button
               onClick={handleDeposit}
-              style={{ background: '#4ade80', color: '#0d1117', fontWeight: 700, fontSize: '14px', padding: '11px 22px', borderRadius: '8px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' as const, fontFamily: 'Inter, sans-serif' }}
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff', fontWeight: 700, fontSize: '15px', padding: '13px 24px', borderRadius: '10px', boxShadow: '0 4px 12px rgba(16,185,129,0.3)', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' as const, fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               Lock & Deposit
             </button>
@@ -239,11 +239,11 @@ export function DisciplineVaultPanel() {
               onClick={handleWithdraw}
               style={{
                 width: '100%',
-                background: isLocked ? 'rgba(220,38,38,0.08)' : 'rgba(74,222,128,0.08)',
-                border: `1px solid ${isLocked ? 'rgba(220,38,38,0.3)' : 'rgba(74,222,128,0.3)'}`,
-                color: isLocked ? '#f87171' : '#4ade80',
-                fontWeight: 600, fontSize: '14px', padding: '12px',
-                borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif',
+                background: isLocked ? 'rgba(220,38,38,0.08)' : 'rgba(16,185,129,0.08)',
+                border: `1px solid ${isLocked ? 'rgba(220,38,38,0.3)' : 'rgba(16,185,129,0.3)'}`,
+                color: isLocked ? '#dc2626' : '#10b981',
+                fontWeight: 700, fontSize: '15px', padding: '14px',
+                borderRadius: '10px', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif",
               }}
             >
               {isLocked ? '⚠️ Withdraw early (4.5% penalty → community)' : '✅ Withdraw (no penalty)'}
@@ -254,61 +254,61 @@ export function DisciplineVaultPanel() {
 
       {/* Transaction steps */}
       {(step === 'approving' || step === 'depositing' || step === 'withdrawing' || step === 'claiming') && (
-        <div style={{ textAlign: 'center', padding: '32px 20px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ width: '32px', height: '32px', border: '2px solid rgba(255,255,255,0.1)', borderTop: '2px solid #4ade80', borderRadius: '50%', margin: '0 auto 16px', animation: 'hf-spin 0.8s linear infinite' }} />
+        <div style={{ textAlign: 'center', padding: '32px 20px', background: '#faf6f0', borderRadius: '10px', border: '1px solid #e8e0d8' }}>
+          <div style={{ width: '32px', height: '32px', border: '2px solid #e8e0d8', borderTop: '2px solid #10b981', borderRadius: '50%', margin: '0 auto 16px', animation: 'hf-spin 0.8s linear infinite' }} />
           <style>{`@keyframes hf-spin { to { transform: rotate(360deg); } }`}</style>
-          <p style={{ color: '#ffffff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px 0' }}>
+          <p style={{ color: '#1c1917', fontWeight: 700, fontSize: '16px', margin: '0 0 4px 0' }}>
             {step === 'approving' ? 'Step 1 of 2 — Approving USDC' : step === 'depositing' ? 'Step 2 of 2 — Locking in vault' : step === 'withdrawing' ? 'Withdrawing funds' : 'Claiming rewards'}
           </p>
-          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', margin: 0 }}>Confirm in your wallet</p>
+          <p style={{ color: '#44403c', fontSize: '14px', fontWeight: 500, margin: 0 }}>Confirm in your wallet</p>
         </div>
       )}
 
       {/* Success: deposited */}
       {step === 'done' && (
-        <div style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)', borderRadius: '10px', padding: '24px', textAlign: 'center' }}>
-          <div style={{ width: '44px', height: '44px', background: '#4ade80', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '20px', color: '#0d1117', fontWeight: 700 }}>✓</div>
-          <p style={{ color: '#4ade80', fontWeight: 600, fontSize: '17px', margin: '0 0 6px 0' }}>Locked for {lockDays} days</p>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', margin: '0 0 16px 0' }}>You'll earn yield + a share of every early withdrawal penalty.</p>
-          {depositTxHash && <a href={`https://basescan.org/tx/${depositTxHash}`} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '12px' }}>View on Basescan ↗</a>}
-          <button onClick={() => { setStep('idle'); setAmount('') }} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', fontWeight: 600, fontSize: '14px', padding: '10px 24px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>Done</button>
+        <div style={{ background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '10px', padding: '24px', textAlign: 'center' }}>
+          <div style={{ width: '44px', height: '44px', background: '#10b981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '20px', color: '#fdf8f3', fontWeight: 700 }}>✓</div>
+          <p style={{ color: '#065f46', fontWeight: 800, fontSize: '18px', margin: '0 0 6px 0' }}>Locked for {lockDays} days</p>
+          <p style={{ color: '#44403c', fontSize: '14px', fontWeight: 500, margin: '0 0 16px 0' }}>You'll earn yield + a share of every early withdrawal penalty.</p>
+          {depositTxHash && <a href={`https://basescan.org/tx/${depositTxHash}`} target="_blank" rel="noopener noreferrer" style={{ color: '#4f46e5', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '12px' }}>View on Basescan ↗</a>}
+          <button onClick={() => { setStep('idle'); setAmount('') }} style={{ background: '#e8e0d8', border: '1px solid #e8e0d8', color: '#1c1917', fontWeight: 600, fontSize: '14px', padding: '10px 24px', borderRadius: '8px', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Done</button>
         </div>
       )}
 
       {/* Success: withdrawn */}
       {step === 'withdrawn' && (
-        <div style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)', borderRadius: '10px', padding: '24px', textAlign: 'center' }}>
-          <div style={{ width: '44px', height: '44px', background: '#4ade80', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '20px', color: '#0d1117', fontWeight: 700 }}>✓</div>
-          <p style={{ color: '#4ade80', fontWeight: 600, fontSize: '17px', margin: '0 0 16px 0' }}>Withdrawn successfully</p>
-          {withdrawTxHash && <a href={`https://basescan.org/tx/${withdrawTxHash}`} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '12px' }}>View on Basescan ↗</a>}
-          <button onClick={() => setStep('idle')} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', fontWeight: 600, fontSize: '14px', padding: '10px 24px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>Done</button>
+        <div style={{ background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '10px', padding: '24px', textAlign: 'center' }}>
+          <div style={{ width: '44px', height: '44px', background: '#10b981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '20px', color: '#fdf8f3', fontWeight: 700 }}>✓</div>
+          <p style={{ color: '#065f46', fontWeight: 800, fontSize: '18px', margin: '0 0 16px 0' }}>Withdrawn successfully</p>
+          {withdrawTxHash && <a href={`https://basescan.org/tx/${withdrawTxHash}`} target="_blank" rel="noopener noreferrer" style={{ color: '#4f46e5', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '12px' }}>View on Basescan ↗</a>}
+          <button onClick={() => setStep('idle')} style={{ background: '#e8e0d8', border: '1px solid #e8e0d8', color: '#1c1917', fontWeight: 600, fontSize: '14px', padding: '10px 24px', borderRadius: '8px', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Done</button>
         </div>
       )}
 
       {/* Success: claimed */}
       {step === 'claimed' && (
-        <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '24px', textAlign: 'center' }}>
-          <div style={{ width: '44px', height: '44px', background: '#4ade80', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '20px', color: '#0d1117', fontWeight: 700 }}>✓</div>
-          <p style={{ color: '#ffffff', fontWeight: 600, fontSize: '17px', margin: '0 0 16px 0' }}>Rewards claimed</p>
-          {claimTxHash && <a href={`https://basescan.org/tx/${claimTxHash}`} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '12px' }}>View on Basescan ↗</a>}
-          <button onClick={() => setStep('idle')} style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', color: '#ffffff', fontWeight: 600, fontSize: '14px', padding: '10px 24px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>Done</button>
+        <div style={{ background: 'rgba(28,25,23,0.03)', border: '1px solid #f0ebe3', borderRadius: '10px', padding: '24px', textAlign: 'center' }}>
+          <div style={{ width: '44px', height: '44px', background: '#10b981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '20px', color: '#fdf8f3', fontWeight: 700 }}>✓</div>
+          <p style={{ color: '#1c1917', fontWeight: 600, fontSize: '17px', margin: '0 0 16px 0' }}>Rewards claimed</p>
+          {claimTxHash && <a href={`https://basescan.org/tx/${claimTxHash}`} target="_blank" rel="noopener noreferrer" style={{ color: '#4f46e5', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '12px' }}>View on Basescan ↗</a>}
+          <button onClick={() => setStep('idle')} style={{ background: '#e8e0d8', border: '1px solid #e8e0d8', color: '#1c1917', fontWeight: 600, fontSize: '14px', padding: '10px 24px', borderRadius: '8px', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Done</button>
         </div>
       )}
 
       {/* Trust & Transparency */}
-      <div style={{ marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '20px' }}>
+      <div style={{ marginTop: '24px', borderTop: '1px solid #ede8e1', paddingTop: '20px' }}>
         <p style={s.label}>Where do your funds go?</p>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
           {[
-            { label: 'Your Wallet', bg: 'rgba(96,165,250,0.12)', color: '#60a5fa' },
-            { label: '→', bg: 'transparent', color: 'rgba(255,255,255,0.5)' },
-            { label: 'DisciplineVault', bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.85)' },
-            { label: '→', bg: 'transparent', color: 'rgba(255,255,255,0.5)' },
-            { label: 'YO Vault', bg: 'rgba(74,222,128,0.1)', color: '#4ade80' },
-            { label: '→', bg: 'transparent', color: 'rgba(255,255,255,0.5)' },
-            { label: 'yoUSD Yield', bg: 'rgba(251,191,36,0.1)', color: '#fbbf24' },
+            { label: 'Your Wallet', bg: 'rgba(99,102,241,0.12)', color: '#4f46e5' },
+            { label: '→', bg: 'transparent', color: '#44403c' },
+            { label: 'DisciplineVault', bg: 'rgba(28,25,23,0.05)', color: '#1c1917' },
+            { label: '→', bg: 'transparent', color: '#44403c' },
+            { label: 'YO Vault', bg: 'rgba(16,185,129,0.1)', color: '#10b981' },
+            { label: '→', bg: 'transparent', color: '#44403c' },
+            { label: 'yoUSD Yield', bg: 'rgba(245,158,11,0.1)', color: '#f59e0b' },
           ].map((item, i) => (
-            <span key={i} style={{ background: item.bg, color: item.color, fontSize: '12px', fontWeight: 600, padding: item.label === '→' ? '0' : '4px 10px', borderRadius: '6px', border: item.label === '→' ? 'none' : '1px solid rgba(255,255,255,0.06)' }}>
+            <span key={i} style={{ background: item.bg, color: item.color, fontSize: '13px', fontWeight: 700, padding: item.label === '→' ? '0' : '5px 12px', borderRadius: '8px', border: item.label === '→' ? 'none' : '1px solid rgba(28,25,23,0.05)' }}>
               {item.label}
             </span>
           ))}
@@ -319,11 +319,11 @@ export function DisciplineVaultPanel() {
             { label: 'YO Protocol vault', href: 'https://basescan.org/address/0x0000000f2eb9f69274678c76222b35eec7588a65' },
             { label: 'Proof of real deposit transaction', href: 'https://basescan.org/tx/0xba6c889a70eed58fe7c6440e77804f2ad2824503868745f19576261d36e52b9f' },
           ].map(link => (
-            <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>{link.label} ↗</a>
+            <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" style={{ color: '#4f46e5', fontSize: '14px', fontWeight: 600, textDecoration: 'none' }}>{link.label} ↗</a>
           ))}
         </div>
-        <div style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)', borderRadius: '8px', padding: '12px 14px' }}>
-          <p style={{ color: 'rgba(251,191,36,0.9)', fontSize: '12px', margin: 0, lineHeight: 1.6 }}>
+        <div style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: '8px', padding: '12px 14px' }}>
+          <p style={{ color: '#78350f', fontSize: '13px', fontWeight: 500, margin: 0, lineHeight: 1.7 }}>
             <strong>Risk disclosure:</strong> HoldFirm is non-custodial. Funds are held by smart contracts, not by us. DisciplineVault is unaudited — only deposit what you can afford to lose. Early withdrawal incurs a 4.5% penalty redistributed to other savers.
           </p>
         </div>

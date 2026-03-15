@@ -45,7 +45,7 @@ export function InflationCounter({
   }).format(lostAmount)
 
   return (
-    <div style={{ height: '100%', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ height: '100%', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* Label row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>
@@ -66,7 +66,7 @@ export function InflationCounter({
 
       {/* Live ticking number */}
       <p style={{
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
         fontSize: '1.5rem',
         fontWeight: 700,
         color: '#dc2626',
@@ -76,14 +76,14 @@ export function InflationCounter({
       }}>
         −{currencyCode} {tickFormatted}
       </p>
-      <p style={{ color: '#9ca3af', fontSize: '0.7rem', margin: '0 0 14px 0' }}>
+      <p style={{ color: '#a8a29e', fontSize: '0.7rem', margin: '0 0 14px 0' }}>
         lost since page load · updating live
       </p>
 
       {/* Annual projection — the scary number */}
       <div style={{
-        background: 'linear-gradient(135deg, #fef2f2, #fff5f5)',
-        border: '1px solid #fecaca',
+        background: 'rgba(220,38,38,0.06)',
+        border: '1px solid rgba(220,38,38,0.15)',
         borderRadius: 10,
         padding: '12px 14px',
         marginBottom: 12,
@@ -91,7 +91,7 @@ export function InflationCounter({
         <p style={{ fontSize: '0.6875rem', color: '#dc2626', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 4px 0' }}>
           Annual loss on $1,000 savings
         </p>
-        <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111827', fontFamily: 'Inter, sans-serif', margin: '0 0 2px 0' }}>
+        <p style={{ fontSize: '1.125rem', fontWeight: 700, color: '#1c1917', fontFamily: "'Plus Jakarta Sans', sans-serif", margin: '0 0 2px 0' }}>
           −{currencyCode} {annualLossFormatted}
         </p>
         <p style={{ fontSize: '0.6875rem', color: '#9ca3af', margin: 0 }}>
@@ -104,13 +104,13 @@ export function InflationCounter({
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        backgroundColor: '#f0fdf4',
-        border: '1px solid #bbf7d0',
+        backgroundColor: 'rgba(16,185,129,0.08)',
+        border: '1px solid #6ee7b7',
         borderRadius: 10,
         padding: '9px 12px',
       }}>
         <span style={{ fontSize: '0.875rem', flexShrink: 0 }}>🔒</span>
-        <p style={{ color: '#15803d', fontSize: '0.75rem', fontWeight: 600, margin: 0, lineHeight: 1.4 }}>
+        <p style={{ color: '#065f46', fontSize: '14px', fontWeight: 600, fontWeight: 600, margin: 0, lineHeight: 1.4 }}>
           HoldFirm is protecting your savings from this
         </p>
       </div>

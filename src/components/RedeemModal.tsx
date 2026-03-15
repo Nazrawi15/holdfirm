@@ -4,32 +4,9 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadCont
 const VAULT_ADDRESS = '0x0000000f2eb9f69274678c76222b35eec7588a65' as `0x${string}`
 
 const VAULT_ABI = [
-  {
-    name: 'redeem',
-    type: 'function',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'shares', type: 'uint256' },
-      { name: 'receiver', type: 'address' },
-      { name: 'owner', type: 'address' },
-    ],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    name: 'balanceOf',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [{ name: 'account', type: 'address' }],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    // ERC-4626: preview how much USDC you get back for N shares
-    name: 'previewRedeem',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [{ name: 'shares', type: 'uint256' }],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
+  { name: 'redeem', type: 'function', stateMutability: 'nonpayable', inputs: [{ name: 'shares', type: 'uint256' }, { name: 'receiver', type: 'address' }, { name: 'owner', type: 'address' }], outputs: [{ name: '', type: 'uint256' }] },
+  { name: 'balanceOf', type: 'function', stateMutability: 'view', inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }] },
+  { name: 'previewRedeem', type: 'function', stateMutability: 'view', inputs: [{ name: 'shares', type: 'uint256' }], outputs: [{ name: '', type: 'uint256' }] },
 ] as const
 
 interface RedeemModalProps {
@@ -41,86 +18,49 @@ export function RedeemModal({ onClose }: RedeemModalProps) {
   const [amount, setAmount] = useState('')
   const [step, setStep] = useState('input')
 
-  // ── Share balance ────────────────────────────────────────────────────────
-  const { data: sharesBalance } = useReadContract({
-    address: VAULT_ADDRESS,
-    abi: VAULT_ABI,
-    functionName: 'balanceOf',
-    args: [address!],
-    query: { enabled: !!address },
-  })
+  const { data: sharesBalance } = useReadContract({ address: VAULT_ADDRESS, abi: VAULT_ABI, functionName: 'balanceOf', args: [address!], query: { enabled: !!address } })
 
-  const formattedShares = sharesBalance
-    ? (Number(sharesBalance) / 1_000_000).toFixed(6)
-    : '0.000000'
-
+  const formattedShares = sharesBalance ? (Number(sharesBalance) / 1_000_000).toFixed(6) : '0.000000'
   const sharesNum = parseFloat(formattedShares)
   const amountNum = parseFloat(amount) || 0
   const isValid = amountNum > 0 && amountNum <= sharesNum
   const percentOfBalance = sharesNum > 0 ? Math.min((amountNum / sharesNum) * 100, 100) : 0
 
-  // ── Withdraw preview — calls previewRedeem on the vault ──────────────────
-  // Converts the typed share amount into on-chain units and asks the vault
-  // exactly how much USDC will come back (includes all yield earned so far)
-  const sharesInUnits = amountNum > 0
-    ? BigInt(Math.floor(amountNum * 1_000_000))
-    : BigInt(0)
+  const sharesInUnits = amountNum > 0 ? BigInt(Math.floor(amountNum * 1_000_000)) : BigInt(0)
 
-  const { data: previewData } = useReadContract({
-    address: VAULT_ADDRESS,
-    abi: VAULT_ABI,
-    functionName: 'previewRedeem',
-    args: [sharesInUnits],
-    query: { enabled: amountNum > 0 },
-  })
+  const { data: previewData } = useReadContract({ address: VAULT_ADDRESS, abi: VAULT_ABI, functionName: 'previewRedeem', args: [sharesInUnits], query: { enabled: amountNum > 0 } })
 
-  // How much USDC the user will actually receive
   const usdcOut = previewData ? Number(previewData) / 1_000_000 : amountNum
-  // Yield = USDC received minus original shares (yield earned on top)
   const yieldEarned = usdcOut - amountNum
 
-  // ── Redeem TX ────────────────────────────────────────────────────────────
   const { writeContract, data: redeemTxHash } = useWriteContract()
   const { isSuccess: redeemSuccess } = useWaitForTransactionReceipt({ hash: redeemTxHash })
 
   useEffect(() => {
-    if (redeemSuccess && step === 'redeeming') {
-      setStep('done')
-    }
+    if (redeemSuccess && step === 'redeeming') setStep('done')
   }, [redeemSuccess])
 
   function handleRedeem() {
     if (!isValid) return
     setStep('redeeming')
-    writeContract({
-      address: VAULT_ADDRESS,
-      abi: VAULT_ABI,
-      functionName: 'redeem',
-      args: [sharesInUnits, address!, address!],
-    })
+    writeContract({ address: VAULT_ADDRESS, abi: VAULT_ABI, functionName: 'redeem', args: [sharesInUnits, address!, address!] })
   }
 
-  function handleMax() {
-    setAmount(formattedShares)
-  }
+  function handleMax() { setAmount(formattedShares) }
 
-  const shortTx = redeemTxHash
-    ? `${redeemTxHash.slice(0, 10)}...${redeemTxHash.slice(-8)}`
-    : ''
+  const shortTx = redeemTxHash ? `${redeemTxHash.slice(0, 10)}...${redeemTxHash.slice(-8)}` : ''
 
   return (
-    <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', zIndex: 9999, backgroundColor: 'rgba(17, 24, 39, 0.55)', backdropFilter: 'blur(4px)' }}>
-      <div style={{ width: '100%', maxWidth: '440px', borderRadius: '16px', overflow: 'hidden', backgroundColor: '#ffffff', boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.06)', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', zIndex: 9999, backgroundColor: 'rgba(28,25,23,0.6)', backdropFilter: 'blur(6px)' }}>
+      <div style={{ width: '100%', maxWidth: '440px', borderRadius: '16px', overflow: 'hidden', backgroundColor: '#fefcf9', border: '1px solid #e8e0d8', boxShadow: '0 24px 64px rgba(0,0,0,0.5)', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px 16px', borderBottom: '1px solid #f3f4f6' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px 16px', borderBottom: '1px solid #ede8e1' }}>
           <div>
-            <h2 style={{ fontSize: '17px', fontWeight: 600, color: '#111827', margin: 0 }}>Withdraw Savings</h2>
-            <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '3px', margin: 0 }}>Redeem yoUSD shares back to USDC</p>
+            <h2 style={{ fontSize: '17px', fontWeight: 600, color: '#1c1917', margin: 0 }}>Withdraw Savings</h2>
+            <p style={{ fontSize: '13px', color: '#44403c', marginTop: '3px', margin: 0 }}>Redeem yoUSD shares back to USDC</p>
           </div>
-          <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #e5e7eb', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: '14px' }}>
-            ✕
-          </button>
+          <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #e8e0d8', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#44403c', fontSize: '14px' }}>✕</button>
         </div>
 
         {/* Body */}
@@ -129,121 +69,91 @@ export function RedeemModal({ onClose }: RedeemModalProps) {
           {/* INPUT */}
           {step === 'input' && (
             <div>
-
               {/* Available balance */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: '#f9fafb', border: '1px solid #f3f4f6', borderRadius: '10px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: '#faf6f0', border: '1px solid #ede8e1', borderRadius: '10px', marginBottom: '16px' }}>
                 <div>
-                  <p style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>Available to Withdraw</p>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 700, color: '#111827', margin: 0 }}>
+                  <p style={{ fontSize: '11px', color: '#78716c', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '3px' }}>Available to Withdraw</p>
+                  <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '16px', fontWeight: 700, color: '#1c1917', margin: 0 }}>
                     {formattedShares}{' '}
-                    <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500 }}>yoUSD</span>
+                    <span style={{ fontSize: '12px', color: '#44403c', fontWeight: 500 }}>yoUSD</span>
                   </p>
                 </div>
-                <button onClick={handleMax} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid #e5e7eb', background: '#ffffff', fontSize: '12px', fontWeight: 600, color: '#374151', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>
+                <button onClick={handleMax} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid #e8e0d8', background: 'rgba(28,25,23,0.05)', fontSize: '12px', fontWeight: 600, color: '#1c1917', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   Max
                 </button>
               </div>
 
-              {/* Amount input */}
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#374151', marginBottom: '8px' }}>Amount to withdraw</label>
-              <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #e5e7eb', borderRadius: '12px', padding: '0 16px', backgroundColor: '#f9fafb' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#44403c', marginBottom: '8px' }}>Amount to withdraw</label>
+              <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #f0ebe3', borderRadius: '12px', padding: '0 16px', backgroundColor: '#faf6f0' }}>
                 <input
                   type="number"
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
                   placeholder="0.000000"
-                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '24px', fontFamily: 'Inter, sans-serif', fontWeight: 700, color: '#111827', padding: '14px 0' }}
+                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '24px', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, color: '#1c1917', padding: '14px 0' }}
                 />
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', marginLeft: '8px' }}>yoUSD</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#44403c', marginLeft: '8px' }}>yoUSD</span>
               </div>
 
               {/* Progress bar */}
               {amountNum > 0 && sharesNum > 0 && (
                 <div style={{ marginTop: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                    <span style={{ fontSize: '12px', color: '#6b7280' }}>Withdrawing</span>
-                    <span style={{ fontSize: '12px', color: '#111827', fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>
-                      {percentOfBalance.toFixed(1)}% of balance
-                    </span>
+                    <span style={{ fontSize: '12px', color: '#44403c' }}>Withdrawing</span>
+                    <span style={{ fontSize: '12px', color: '#1c1917', fontWeight: 600, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{percentOfBalance.toFixed(1)}% of balance</span>
                   </div>
-                  <div style={{ height: '4px', backgroundColor: '#f3f4f6', borderRadius: '2px' }}>
-                    <div style={{ height: '100%', width: `${percentOfBalance}%`, backgroundColor: percentOfBalance > 90 ? '#dc2626' : '#111827', borderRadius: '2px', transition: 'width 0.2s, background 0.2s' }} />
+                  <div style={{ height: '4px', backgroundColor: '#e8e0d8', borderRadius: '2px' }}>
+                    <div style={{ height: '100%', width: `${percentOfBalance}%`, backgroundColor: percentOfBalance > 90 ? '#dc2626' : '#10b981', borderRadius: '2px', transition: 'width 0.2s, background 0.2s' }} />
                   </div>
                 </div>
               )}
 
-              {/* ── WITHDRAW PREVIEW ────────────────────────────────────
-                  Shows exact USDC they'll receive + yield earned on top.
-                  Fetched live from previewRedeem() on the vault contract.
-              ──────────────────────────────────────────────────────── */}
+              {/* Withdrawal preview */}
               {amountNum > 0 && amountNum <= sharesNum && (
-                <div style={{ marginTop: '14px', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-                  {/* Preview header */}
-                  <div style={{ padding: '10px 14px', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                    <p style={{ fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.07em', margin: 0 }}>
-                      Withdrawal Preview
-                    </p>
+                <div style={{ marginTop: '14px', border: '1px solid #e8e0d8', borderRadius: '12px', overflow: 'hidden' }}>
+                  <div style={{ padding: '10px 14px', backgroundColor: '#faf6f0', borderBottom: '1px solid #ede8e1' }}>
+                    <p style={{ fontSize: '11px', fontWeight: 700, color: '#44403c', textTransform: 'uppercase', letterSpacing: '0.07em', margin: 0 }}>Withdrawal Preview</p>
                   </div>
-
-                  {/* Preview rows */}
                   <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-
-                    {/* Shares in */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '13px', color: '#6b7280' }}>Shares redeemed</span>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#111827', fontFamily: 'Inter, sans-serif' }}>
-                        {amountNum.toFixed(6)} yoUSD
-                      </span>
+                      <span style={{ fontSize: '13px', color: '#44403c' }}>Shares redeemed</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#1c1917', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{amountNum.toFixed(6)} yoUSD</span>
                     </div>
-
-                    {/* Yield earned */}
                     {yieldEarned > 0 && (
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '13px', color: '#6b7280' }}>Yield earned</span>
-                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#15803d', fontFamily: 'Inter, sans-serif' }}>
-                          +${yieldEarned.toFixed(6)}
-                        </span>
+                        <span style={{ fontSize: '13px', color: '#44403c' }}>Yield earned</span>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#059669', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>+${yieldEarned.toFixed(6)}</span>
                       </div>
                     )}
-
-                    {/* Divider */}
-                    <div style={{ height: '1px', backgroundColor: '#f3f4f6' }} />
-
-                    {/* USDC you receive */}
+                    <div style={{ height: '1px', backgroundColor: '#ede8e1' }} />
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>You receive</span>
-                      <span style={{ fontSize: '18px', fontWeight: 700, color: '#111827', fontFamily: 'Inter, sans-serif' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: '#1c1917' }}>You receive</span>
+                      <span style={{ fontSize: '18px', fontWeight: 700, color: '#1c1917', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                         ${usdcOut.toFixed(6)}{' '}
-                        <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 500 }}>USDC</span>
+                        <span style={{ fontSize: '12px', color: '#78716c', fontWeight: 500 }}>USDC</span>
                       </span>
                     </div>
-
                   </div>
                 </div>
               )}
 
               {/* Over-balance warning */}
               {amountNum > sharesNum && sharesNum > 0 && (
-                <div style={{ marginTop: '12px', padding: '10px 12px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px' }}>
-                  <p style={{ fontSize: '12px', color: '#dc2626', margin: 0 }}>
-                    Amount exceeds your available balance of {formattedShares} yoUSD
-                  </p>
+                <div style={{ marginTop: '12px', padding: '10px 12px', backgroundColor: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.2)', borderRadius: '10px' }}>
+                  <p style={{ fontSize: '12px', color: '#dc2626', margin: 0 }}>Amount exceeds your available balance of {formattedShares} yoUSD</p>
                 </div>
               )}
 
               {/* Info note */}
-              <div style={{ display: 'flex', gap: '10px', marginTop: '14px', padding: '10px 12px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #f3f4f6' }}>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '14px', padding: '10px 12px', backgroundColor: '#faf6f0', borderRadius: '10px', border: '1px solid #ede8e1' }}>
                 <span style={{ fontSize: '14px', flexShrink: 0 }}>💡</span>
-                <p style={{ fontSize: '12px', color: '#6b7280', lineHeight: 1.55, margin: 0 }}>
-                  Shares are redeemed 1:1 plus all yield earned. Funds arrive in your wallet instantly.
-                </p>
+                <p style={{ fontSize: '12px', color: '#44403c', lineHeight: 1.55, margin: 0 }}>Shares are redeemed 1:1 plus all yield earned. Funds arrive in your wallet instantly.</p>
               </div>
 
-              {/* Withdraw button */}
               <button
                 onClick={handleRedeem}
                 disabled={!isValid}
-                style={{ width: '100%', marginTop: '18px', padding: '13px 0', borderRadius: '12px', border: 'none', background: !isValid ? '#e5e7eb' : '#111827', color: !isValid ? '#9ca3af' : '#ffffff', fontSize: '15px', fontWeight: 600, cursor: !isValid ? 'not-allowed' : 'pointer', fontFamily: 'Inter, sans-serif', transition: 'background 0.15s' }}
+                style={{ width: '100%', marginTop: '18px', padding: '13px 0', borderRadius: '12px', border: 'none', background: !isValid ? '#e8e0d8' : '#e8e0d8', color: !isValid ? '#a8a29e' : '#ffffff', fontSize: '15px', fontWeight: 600, cursor: !isValid ? 'not-allowed' : 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif", transition: 'background 0.15s' }}
               >
                 {isValid ? `Withdraw $${usdcOut.toFixed(2)} USDC` : 'Withdraw USDC'}
               </button>
@@ -254,9 +164,9 @@ export function RedeemModal({ onClose }: RedeemModalProps) {
           {step === 'redeeming' && (
             <div style={{ padding: '28px 0', textAlign: 'center' }}>
               <Spinner />
-              <p style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginTop: '18px', marginBottom: '6px' }}>Processing Withdrawal</p>
-              <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Confirm the transaction in your wallet</p>
-              <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>yoUSD shares are being redeemed to USDC</p>
+              <p style={{ fontSize: '16px', fontWeight: 600, color: '#1c1917', marginTop: '18px', marginBottom: '6px' }}>Processing Withdrawal</p>
+              <p style={{ fontSize: '14px', color: '#44403c', margin: 0 }}>Confirm the transaction in your wallet</p>
+              <p style={{ fontSize: '12px', color: '#78716c', marginTop: '4px' }}>yoUSD shares are being redeemed to USDC</p>
             </div>
           )}
 
@@ -264,29 +174,24 @@ export function RedeemModal({ onClose }: RedeemModalProps) {
           {step === 'done' && (
             <div style={{ padding: '8px 0' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0 20px' }}>
-                <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#f0fdf4', border: '2px solid #86efac', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: '#15803d', marginBottom: '16px', fontWeight: 700 }}>✓</div>
-                <p style={{ fontSize: '17px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>Withdrawal Confirmed</p>
-                <p style={{ fontSize: '14px', color: '#6b7280' }}>
-                  ${usdcOut.toFixed(2)} USDC returned to your wallet
-                </p>
+                <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'rgba(16,185,129,0.1)', border: '2px solid rgba(16,185,129,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: '#059669', marginBottom: '16px', fontWeight: 700 }}>✓</div>
+                <p style={{ fontSize: '17px', fontWeight: 700, color: '#1c1917', marginBottom: '4px' }}>Withdrawal Confirmed</p>
+                <p style={{ fontSize: '14px', color: '#44403c' }}>${usdcOut.toFixed(2)} USDC returned to your wallet</p>
               </div>
-
               {redeemTxHash && (
-                <a href={`https://basescan.org/tx/${redeemTxHash}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', textDecoration: 'none', marginBottom: '16px' }}>
+                <a href={`https://basescan.org/tx/${redeemTxHash}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: '#faf6f0', border: '1px solid #e8e0d8', borderRadius: '10px', textDecoration: 'none', marginBottom: '16px' }}>
                   <div>
-                    <p style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '3px' }}>Transaction</p>
-                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#111827', fontWeight: 600, margin: 0 }}>{shortTx}</p>
+                    <p style={{ fontSize: '11px', color: '#78716c', marginBottom: '3px' }}>Transaction</p>
+                    <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '13px', color: '#1c1917', fontWeight: 600, margin: 0 }}>{shortTx}</p>
                   </div>
-                  <span style={{ fontSize: '12px', color: '#15803d', fontWeight: 600 }}>View on Base ↗</span>
+                  <span style={{ fontSize: '12px', color: '#059669', fontWeight: 600 }}>View on Base ↗</span>
                 </a>
               )}
-
-              <button onClick={onClose} style={{ width: '100%', padding: '13px 0', borderRadius: '12px', border: '1.5px solid #e5e7eb', background: 'transparent', color: '#374151', fontSize: '15px', fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>
+              <button onClick={onClose} style={{ width: '100%', padding: '13px 0', borderRadius: '12px', border: '1px solid #e8e0d8', background: 'transparent', color: '#1c1917', fontSize: '15px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Done
               </button>
             </div>
           )}
-
         </div>
       </div>
       <style>{`@keyframes hf-spin { to { transform: rotate(360deg); } }`}</style>
@@ -295,7 +200,5 @@ export function RedeemModal({ onClose }: RedeemModalProps) {
 }
 
 function Spinner() {
-  return (
-    <div style={{ width: '40px', height: '40px', border: '3px solid #e5e7eb', borderTopColor: '#111827', borderRadius: '50%', animation: 'hf-spin 0.75s linear infinite', margin: '0 auto' }} />
-  )
+  return <div style={{ width: '40px', height: '40px', border: '3px solid #f0ebe3', borderTopColor: '#44403c', borderRadius: '50%', animation: 'hf-spin 0.75s linear infinite', margin: '0 auto' }} />
 }
