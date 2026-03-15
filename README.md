@@ -73,15 +73,15 @@ Every locked dollar earns **two streams simultaneously**: YO Protocol APY + a sh
 
 ### 🤖 AI Onboarding Wizard
 4 questions. Personalized savings strategy powered by Groq (Llama 3.3 70B).
-- Where are you from? (12 high-inflation countries)
+- What is your local currency? (USD, EUR, + 12 high-inflation currencies)
 - Have you lost money to inflation?
-- What's your savings goal?
+- What is your savings goal?
 - How long can you commit?
 
-The AI generates a warm, personal, actionable recommendation — telling you exactly which HoldFirm mode fits your situation and why.
+The AI generates a warm, personal, actionable recommendation — telling you exactly which HoldFirm mode fits your situation and why. Works for any user globally — not just specific countries.
 
 ### 💰 NestSave
-Flexible USDC or EURC savings earning live APY via YO Protocol. Switch between Dollar Savings (yoUSD) and Euro Savings (yoEUR) with a live vault selector. View your balance in your local currency in real time. 30-day APY history chart updates automatically as you switch vaults.
+Flexible USDC or EURC savings earning live APY via YO Protocol. Switch between Dollar Savings (yoUSD) and Euro Savings (yoEUR) with a live vault selector. View your balance in your local currency in real time. 30-day APY history chart updates automatically as you switch vaults. Recent Activity section shows your last 5 transactions powered by `useUserHistory`.
 
 ### 🏦 DisciplineVault ⭐ Core Innovation
 Our custom smart contract deployed on Base mainnet. The only savings vault that pays you for other people's impatience.
@@ -90,7 +90,7 @@ Our custom smart contract deployed on Base mainnet. The only savings vault that 
 - Funds forwarded internally to YO Protocol yoUSD vault, earning yield
 - Early withdrawal: 4.5% penalty automatically redistributed to all committed savers
 - On-time withdrawal: full principal + YO yield + share of all penalties collected
-- Penalty pool visible in real time
+- 🎰 Discipline Jackpot — live penalty pool visible in real time
 - Claim rewards anytime with one click
 
 ### 🏆 Leaderboard
@@ -100,25 +100,32 @@ On-chain rankings read directly from DisciplineVault on Base. Two views:
 
 Every address links to Basescan. Updates every block. No backend.
 
+### 📉 Inflation Counter
+Live counter showing how much purchasing power your local currency loses in real time. Shows annual loss projection on $1,000 savings — makes the inflation problem visceral and personal. Supports 12 high-inflation currencies plus USD and EUR.
+
+### ❓ FAQ & Contact
+10-question FAQ accordion on the landing page covering yield source, penalties, custody, and trust. Contact: [@Nasrohassen on Telegram](https://t.me/Nasrohassen).
+
 ---
 
 ## YO Protocol SDK Integration
 
-HoldFirm uses **11 YO Protocol SDK methods** — the deepest integration in this hackathon.
+HoldFirm uses **12 YO Protocol SDK methods** — the deepest integration in this hackathon.
 
 | Method | Source | Where Used | Purpose |
 |--------|--------|-----------|---------|
 | `YieldProvider` | `@yo-protocol/react` | `main.tsx` | Wraps entire app, provides context |
 | `useVaults` | `@yo-protocol/react` | `useYoVault.ts` | Live APY + TVL for both vaults |
-| `useVaultState` | `@yo-protocol/react` | `useYoVault.ts` | User balance and shares |
 | `useVaultHistory` | `@yo-protocol/react` | `useVaultHistory.ts` | 30-day APY history for chart |
 | `usePreviewDeposit` | `@yo-protocol/react` | `DepositModal.tsx` | Preview shares before depositing |
 | `usePreviewRedeem` | `@yo-protocol/react` | `RedeemModal.tsx` | Preview exact USDC before withdrawing |
 | `useDeposit` | `@yo-protocol/react` | `DepositModal.tsx` | Execute deposit transaction |
 | `useRedeem` | `@yo-protocol/react` | `RedeemModal.tsx` | Execute withdraw transaction |
 | `useApprove` | `@yo-protocol/react` | `DepositModal.tsx` | Approve USDC/EURC spending |
+| `useUserHistory` | `@yo-protocol/react` | `App.tsx` | Recent activity feed for connected wallet |
 | `createApiClient` | `@yo-protocol/core` | `lib/yo.ts` | Initialize API connection |
 | `API_BASE_URL` | `@yo-protocol/core` | `lib/yo.ts` | Base URL constant |
+| `getVaultSnapshot` | `@yo-protocol/core` | `useYoVault.ts` | Vault APY + TVL snapshot |
 
 **Vaults:**
 - yoUSD: `0x0000000f2eb9f69274678c76222b35eec7588a65` (Dollar Savings)
@@ -132,7 +139,7 @@ Both vaults are live with real deposits flowing through YO Protocol on Base Main
 
 **Address:** `0x85E535Af5663426D38461B2e74d34FafA8a7472a`  
 **Network:** Base Mainnet  
-**Verified:** https://basescan.org/address/0x85E535Af5663426D38461B2e74d34FafA8a7472a
+**Source:** Open source — visible on Basescan
 
 ### Key Functions
 ```solidity
@@ -214,6 +221,7 @@ Your Wallet → DisciplineVault → YO Protocol yoUSD Vault → yoUSD Yield
 - No upgradeability — immutable, what you see is what runs forever
 - Penalty enforcement is pure Solidity — cannot be bypassed or modified
 - Leaderboard reads directly from contract — no backend, no database
+- Open source — full contract visible on Basescan
 
 **Risk Disclosure:**
 DisciplineVault is unaudited — only deposit what you can afford to lose. YO Protocol vault risk applies. Early withdrawal incurs a 4.5% penalty redistributed to committed savers.
@@ -232,10 +240,10 @@ DisciplineVault is unaudited — only deposit what you can afford to lose. YO Pr
 | Layer | Technology |
 |-------|-----------|
 | Frontend | React + Vite + TypeScript |
-| Styling | Tailwind CSS v3 + Inline styles |
+| Fonts | Instrument Serif + Plus Jakarta Sans + DM Mono |
 | Wallet | RainbowKit + wagmi + viem |
 | Blockchain | Base Mainnet |
-| Savings Protocol | YO Protocol (@yo-protocol/core + @yo-protocol/react) |
+| Savings Protocol | YO Protocol (@yo-protocol/core v1.0.4 + @yo-protocol/react v1.0.4) |
 | Smart Contract | Solidity 0.8.28 + Hardhat |
 | AI Wizard | Groq API (Llama 3.3 70B) |
 | Exchange Rates | open.er-api.com |
@@ -247,6 +255,8 @@ DisciplineVault is unaudited — only deposit what you can afford to lose. YO Pr
 
 | Country | Currency | Inflation |
 |---------|----------|-----------|
+| 🌍 Global | USD (Dollar) | Stable |
+| 🌍 Global | EUR (Euro) | Stable |
 | 🇹🇷 Turkey | TRY | 65% |
 | 🇦🇷 Argentina | ARS | 211% |
 | 🇳🇬 Nigeria | NGN | 28.9% |
@@ -266,22 +276,24 @@ DisciplineVault is unaudited — only deposit what you can afford to lose. YO Pr
 
 ## Why HoldFirm Wins
 
-**UX Simplicity (30%):** Connect wallet → AI wizard → personalized strategy → one-click deposit. No KYC. No sign-up. Works in 60 seconds. Fully localized — see your balance in TRY, ARS, NGN, and 9 other currencies in real time.
+**UX Simplicity (30%):** Connect wallet → AI wizard → personalized strategy → one-click deposit. No KYC. No sign-up. Works in 60 seconds. Fully localized — see your balance in TRY, ARS, NGN, USD, EUR and 9 other currencies in real time. FAQ section addresses trust concerns directly on the landing page.
 
-**Creativity & Growth Potential (30%):** First DeFi savings app that pays committed savers from impatient users' penalties. Behavioral finance meets DeFi. 1.4 billion addressable users. Onchain leaderboard creates social competition and retention. yoUSD + yoEUR dual-vault gives access to both dollar and euro savings in one app.
+**Creativity & Growth Potential (30%):** First DeFi savings app that pays committed savers from impatient users' penalties. Behavioral finance meets DeFi. 1.4 billion addressable users. Onchain leaderboard creates social competition and retention. yoUSD + yoEUR dual-vault gives access to both dollar and euro savings in one app. AI-powered onboarding works for any user globally.
 
-**Integration Quality (20%):** 11 YO SDK methods used across the full deposit/withdraw/preview/history lifecycle. Real funds flowing through both yoUSD and yoEUR vaults onchain. Live APY, TVL, and 30-day APY history chart powered entirely by the YO SDK.
+**Integration Quality (20%):** 12 YO SDK methods used across the full deposit/withdraw/preview/history lifecycle. Real funds flowing through both yoUSD and yoEUR vaults onchain. Live APY, TVL, 30-day APY history chart, and personal transaction history all powered by the YO SDK.
 
-**Risk & Trust (20%):** Full fund flow transparency. Two real TX proofs on mainnet — deposit AND early withdrawal with penalty redistribution confirmed. Contract verified on Basescan. Non-custodial. No admin keys. No backend — leaderboard reads directly from the contract.
+**Risk & Trust (20%):** Full fund flow transparency. Two real TX proofs on mainnet — deposit AND early withdrawal with penalty redistribution confirmed. Open source contract. Non-custodial. No admin keys. No backend — leaderboard reads directly from the contract. 10-question FAQ on landing page addresses every trust concern.
 
 ---
 
 ## Roadmap (v2)
 
-- **NFT Lock Positions** — each DisciplineVault deposit mints an NFT representing your locked position. Tradeable on secondary markets. Adds liquidity to locked capital without breaking commitment.
+- **NFT Lock Positions** — each DisciplineVault deposit mints an NFT representing your locked position. Tradeable on secondary markets.
+- **Custom lock periods** — flexible day selection beyond 30/60/90
 - **Multi-asset vaults** — lock ETH, cbBTC alongside USDC
 - **Cross-chain** — deploy on Optimism, Arbitrum
 - **Mobile app** — React Native with biometric savings reminders
+- **Formal audit** — security audit before production scaling
 
 ---
 
@@ -300,6 +312,12 @@ VITE_WALLETCONNECT_PROJECT_ID=
 VITE_GROQ_API_KEY=
 VITE_DISCIPLINE_VAULT_MAINNET=0x85E535Af5663426D38461B2e74d34FafA8a7472a
 ```
+
+---
+
+## Contact
+
+Questions? Reach us on Telegram: [@Nasrohassen](https://t.me/Nasrohassen)
 
 ---
 
