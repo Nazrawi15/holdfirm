@@ -104,7 +104,7 @@ Every address links to Basescan. Updates every block. No backend.
 Live counter showing how much purchasing power your local currency loses in real time. Shows annual loss projection on $1,000 savings — makes the inflation problem visceral and personal. Supports 12 high-inflation currencies plus USD and EUR.
 
 ### ❓ FAQ & Contact
-10-question FAQ accordion on the landing page covering yield source, penalties, custody, and trust. Contact: [@Nasrohassen on Telegram](https://t.me/Nasrohassen).
+10 question FAQ accordion on the landing page covering yield source, penalties, custody, and trust. Contact: [@Nasrohassen on Telegram](https://t.me/Nasrohassen).
 
 ---
 
@@ -194,13 +194,13 @@ rewardDebt[msg.sender] = (userShares * accRewardPerShare) / 1e18;
 | Type | TX Hash | Status |
 |------|---------|--------|
 | Contract Deploy | [View on Basescan](https://basescan.org/address/0x85E535Af5663426D38461B2e74d34FafA8a7472a) | ✅ Live |
-| Real Deposit | [0xba6c88...](https://basescan.org/tx/0xba6c889a70eed58fe7c6440e77804f2ad2824503868745f19576261d36e52b9f) | ✅ Confirmed |
-| Early Withdrawal (penalty fired) | [0xda489d...](https://basescan.org/tx/0xda489d902b14efc98ac202487cbcd85c0ed220a6e0295dc656284f652c3bcafb) | ✅ Confirmed |
+| Real Deposit | [0xba6c88...](https://basescan.org/tx/0x43b5f7750e22d08b6c6b43e8df5dd3df9c95d22750c1642385255cb3663fbfb5) | ✅ Confirmed |
+| Early Withdrawal (penalty fired) | [0xda489d...](https://basescan.org/tx/0xafbf2bee3f17efd3385c298b5a3fe0e1a3d743a94e60d0d580ec69443f713a13) | ✅ Confirmed |
 
 ### What the early withdrawal TX proves:
-- `0.044599 yoUSD` shares burned from the vault
-- `0.047753 USDC` returned to the user
-- The difference (`0.0021 yoUSD`) remained in the penalty pool as rewards for committed savers
+- 17.82285 yoUSD shares burned from the vault
+- 19.099808 USDC returned to the user
+- The difference (`0.83982 yoUSD`) remained in the penalty pool as rewards for committed savers
 - `accRewardPerShare` updated automatically in the same transaction
 - No admin involvement. Pure smart contract logic.
 
@@ -208,7 +208,7 @@ The full deposit → withdrawal → penalty redistribution cycle has been **prov
 
 ---
 
-## Trust & Transparency
+## Trust and Transparency
 
 **Where do funds go?**
 ```
@@ -276,13 +276,17 @@ DisciplineVault is unaudited — only deposit what you can afford to lose. YO Pr
 
 ## Why HoldFirm Wins
 
-**UX Simplicity (30%):** Connect wallet → AI wizard → personalized strategy → one-click deposit. No KYC. No sign-up. Works in 60 seconds. Fully localized — see your balance in TRY, ARS, NGN, USD, EUR and 9 other currencies in real time. FAQ section addresses trust concerns directly on the landing page.
+**UX Simplicity (30%)**
+Connect wallet → AI wizard → personalized strategy → one-click deposit. No KYC. No sign-up. Works in 60 seconds. Fully localized — see your balance in TRY, ARS, NGN, USD, EUR and 9 other currencies in real time. FAQ section addresses trust concerns directly on the landing page.
 
-**Creativity & Growth Potential (30%):** First DeFi savings app that pays committed savers from impatient users' penalties. Behavioral finance meets DeFi. 1.4 billion addressable users. Onchain leaderboard creates social competition and retention. yoUSD + yoEUR dual-vault gives access to both dollar and euro savings in one app. AI-powered onboarding works for any user globally.
+**Creativity & Growth Potential (30%)**
+First DeFi savings app that pays committed savers from impatient users' penalties. Behavioral finance meets DeFi. 1.4 billion addressable users. Onchain leaderboard creates social competition and retention. yoUSD + yoEUR dual-vault gives access to both dollar and euro savings in one app. AI-powered onboarding works for any user globally.
 
-**Integration Quality (20%):** 12 YO SDK methods used across the full deposit/withdraw/preview/history lifecycle. Real funds flowing through both yoUSD and yoEUR vaults onchain. Live APY, TVL, 30-day APY history chart, and personal transaction history all powered by the YO SDK.
+**Integration Quality (20%)**
+12 YO SDK methods used across the full deposit/withdraw/preview/history lifecycle. Real funds flowing through both yoUSD and yoEUR vaults onchain. Live APY, TVL, 30-day APY history chart, and personal transaction history all powered by the YO SDK.
 
-**Risk & Trust (20%):** Full fund flow transparency. Two real TX proofs on mainnet — deposit AND early withdrawal with penalty redistribution confirmed. Open source contract. Non-custodial. No admin keys. No backend — leaderboard reads directly from the contract. 10-question FAQ on landing page addresses every trust concern.
+**Risk & Trust (20%)**
+Full fund flow transparency. Two real TX proofs on mainnet — deposit AND early withdrawal with penalty redistribution confirmed. Open source contract. Non-custodial. No admin keys. No backend — leaderboard reads directly from the contract. 10-question FAQ on landing page addresses every trust concern.
 
 ---
 
@@ -317,7 +321,7 @@ VITE_DISCIPLINE_VAULT_MAINNET=0x85E535Af5663426D38461B2e74d34FafA8a7472a
 
 ## Contact
 
-Questions? Reach us on Telegram: [@Nasrohassen](https://t.me/Nasrohassen)
+Questions? Reach us on Telegram: [@Nasrohassen](https://t.me/Nasrohassen) oe emil- nasserhassenhussen@gmail.com
 
 ---
 
